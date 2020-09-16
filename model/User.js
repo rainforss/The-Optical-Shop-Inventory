@@ -18,6 +18,16 @@ const userSchema = new mongoose.Schema(
       max: 1024,
       min: 6,
     },
+    active: {
+      type: Boolean,
+      default: false,
+    },
+    activationToken: {
+      type: String,
+    },
+    tokenExpires: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
