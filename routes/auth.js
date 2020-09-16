@@ -29,8 +29,8 @@ router.post("/register", async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
   if (
-    req.body.email === "shengyan@ualberta.ca" ||
-    req.body.email === "rainforss123@gmail.com"
+    req.body.email === process.env.ACCEPTED_EMAIL_1 ||
+    req.body.email === process.env.ACCEPTED_EMAIL_2
   ) {
     const user = new User({
       name: req.body.name,
