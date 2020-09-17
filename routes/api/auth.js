@@ -27,6 +27,7 @@ router.post("/register", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
+  //Only a list of invited users can register for the app
   if (
     req.body.email === process.env.ACCEPTED_EMAIL_1 ||
     req.body.email === process.env.ACCEPTED_EMAIL_2
@@ -50,6 +51,7 @@ router.post("/register", async (req, res) => {
       html: `Please click the following link to <a href="${activationLink}">${activationLink}</a> to activate your account.`,
     };
     try {
+      //Send user the activation link and save the user credentials to database
       mailer(mailOptions, res);
       const savedUser = await user.save();
       res.send(`The activation email has been sent to ${user._id}`);
@@ -80,7 +82,9 @@ router.post("/login", async (req, res) => {
   res.header("auth-token", token).send(token);
 });
 
+//Activation link implementation
 router.get("/activate/:activationToken", (req, res, next) => {
+  //Find the user who possesses the activation token which is within expiration date
   User.findOne(
     {
       activationToken: decodeURIComponent(req.params.activationToken),
@@ -89,13 +93,19 @@ router.get("/activate/:activationToken", (req, res, next) => {
     (err, user) => {
       if (err) return next(err);
       if (!user) {
-        return res.status(400).send("failed");
+        return res
+          .status(400)
+          .send(
+            "Activation failed. Either you have not registered or the activation link is already expired. Please register again."
+          );
       }
 
       user.active = true;
       user.save((err, user) => {
         if (err) return next(err);
-        res.status(200).send("success");
+        res
+          .status(200)
+          .send("Congratulations! Your account has now been activated.");
       });
     }
   );
