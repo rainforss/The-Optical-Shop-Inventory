@@ -17,7 +17,7 @@ app.use(express.json());
 app.use("/api/user", authRoute);
 app.use("/api/items", itemRoute);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(
   PORT,
   console.log(`Server running in ${process.env.NODE_ENV} on port ${PORT}`)
