@@ -12,9 +12,10 @@ router.get("/", async (req, res) => {
     const items = await Item.find().sort({ barcode: 1 });
     res.json(items);
   } catch (err) {
-    res
-      .status(500)
-      .send("Server internal error. Cannot handle request at the moment");
+    res.status(500).json({
+      success: false,
+      msg: "Server internal error. Cannot handle request at the moment",
+    });
   }
 });
 
@@ -25,7 +26,7 @@ router.get("/", async (req, res) => {
 //@access Private
 
 router.post("/", verify, async (req, res) => {
-  const currentUser = await User.findOne({ _id: req.user });
+  //const currentUser = await User.findOne({ _id: req.user });
   const newItem = new Item({
     name: req.body.name,
     barcode: req.body.barcode,
@@ -34,13 +35,25 @@ router.post("/", verify, async (req, res) => {
     price: req.body.price,
     itemType: req.body.itemType,
     inStock: req.body.inStock,
-    lastModifiedBy: currentUser.email,
+    //lastModifiedBy: currentUser.email,
   });
   try {
+    const itemAtSamePosition = await Item.findOne({
+      row: req.body.row,
+      column: req.body.column,
+    });
+    if (itemAtSamePosition)
+      return res.status(400).json({
+        success: false,
+        msg:
+          "Item with same location already exists in the inventory, pick another location",
+      });
     const savedItem = await newItem.save();
     res.json(savedItem);
   } catch (err) {
-    res.status(500).send(`${err},Item was not added successfully.`);
+    res
+      .status(500)
+      .json({ success: false, msg: `${err},Item was not added successfully.` });
   }
 });
 

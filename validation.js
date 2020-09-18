@@ -11,7 +11,6 @@ module.exports = {
   },
   loginValidation: (data) => {
     const schema = joi.object({
-      name: joi.string().min(6).required(),
       email: joi.string().min(6).required().email(),
       password: joi.string().min(6).required(),
     });

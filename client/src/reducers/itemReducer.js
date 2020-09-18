@@ -1,53 +1,8 @@
-import uuid from "uuid";
 import * as types from "../actions/types";
 
 const initialState = {
-  items: [
-    {
-      id: uuid(),
-      name: "Rayban 1105",
-      barcode: "100001",
-      row: 1,
-      column: 1,
-      price: "259.99",
-      itemType: "Sunglasses",
-      inStock: true,
-      lastModifiedBy: "jake@gmail.com",
-    },
-    {
-      id: uuid(),
-      name: "Rayban 1305",
-      barcode: "100002",
-      row: 1,
-      column: 2,
-      price: "259.99",
-      itemType: "Sunglasses",
-      inStock: true,
-      lastModifiedBy: "jake@gmail.com",
-    },
-    {
-      id: uuid(),
-      name: "Rayban 2107",
-      barcode: "100003",
-      row: 2,
-      column: 1,
-      price: "259.99",
-      itemType: "Sunglasses",
-      inStock: true,
-      lastModifiedBy: "jake@gmail.com",
-    },
-    {
-      id: uuid(),
-      name: "Rayban 5105",
-      barcode: "100004",
-      row: 2,
-      column: 2,
-      price: "259.99",
-      itemType: "Sunglasses",
-      inStock: true,
-      lastModifiedBy: "jake@gmail.com",
-    },
-  ],
+  items: [],
+  loading: false,
 };
 
 export default function (state = initialState, action) {
@@ -55,6 +10,23 @@ export default function (state = initialState, action) {
     case types.GET_ITEMS:
       return {
         ...state,
+        items: action.items,
+        loading: false,
+      };
+    case types.DELETE_ITEM:
+      return {
+        ...state,
+        items: state.items.filter((item) => item._id !== action.itemId),
+      };
+    case types.ADD_ITEM:
+      return {
+        ...state,
+        items: [action.newItem, ...state.items],
+      };
+    case types.ITEMS_LOADING:
+      return {
+        ...state,
+        loading: true,
       };
     default:
       return state;
