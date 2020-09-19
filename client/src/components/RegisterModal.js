@@ -136,7 +136,7 @@ const RegisterModal = ({ register }) => {
     validate();
   }, [inputFields]);
 
-  //NEED FULLY FUNCTIONAL ERROR RESPONSE AND CLIENT SIDE VALIDATION
+  //Client side validation finished, need server side error response implementation
 
   return (
     <>
