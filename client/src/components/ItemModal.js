@@ -27,7 +27,6 @@ const ItemModal = ({ addItem, isAuthenticated }) => {
   const onChange = (e) => {
     setItemInfo({ ...itemInfo, [e.target.name]: e.target.value });
     setInputModified({ ...inputModified, [e.target.name]: true });
-    console.log(inputModified);
   };
   const resetFormInputs = () => {
     setItemInfo({

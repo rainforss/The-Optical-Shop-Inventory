@@ -22,6 +22,7 @@ const LoginModal = ({ login }) => {
   const onChange = (e) => {
     SetInputFields({ ...inputFields, [e.target.name]: e.target.value });
   };
+  const resetFormInputs = () => {};
   const onSubmit = (e) => {
     e.preventDefault();
     const { email, password } = inputFields;
