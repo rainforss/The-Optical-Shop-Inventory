@@ -81,6 +81,12 @@ export const logout = () => {
   };
 };
 
+export const resetRegisterStatus = () => {
+  return {
+    type: types.RESET_REGISTER_STATUS,
+  };
+};
+
 //Configure auth-token in the header if JWT token exists
 export const tokenConfiguration = (getState) => {
   //Get the token from auth state tree

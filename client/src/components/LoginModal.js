@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Modal,
@@ -6,32 +6,57 @@ import {
   ModalBody,
   Form,
   NavLink,
+  Alert,
 } from "reactstrap";
 import { connect } from "react-redux";
 import { login } from "../actions/authActions";
+import { clearErrors } from "../actions/errorActions";
 import TextInput from "./common/TextInput";
 import PropTypes from "prop-types";
 
-const LoginModal = ({ login }) => {
-  const [modalOpen, SetModalOpen] = useState(false);
-  const [inputFields, SetInputFields] = useState({
+const LoginModal = ({ login, clearErrors, error, auth }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [inputFields, setInputFields] = useState({
     email: "",
     password: "",
   });
-  const toggle = () => SetModalOpen(!modalOpen);
-  const onChange = (e) => {
-    SetInputFields({ ...inputFields, [e.target.name]: e.target.value });
+  const [serverError, setServerError] = useState({});
+  const toggle = () => {
+    setModalOpen(!modalOpen);
+    clearErrors();
+    resetFormInputs();
   };
-  const resetFormInputs = () => {};
+  const onChange = (e) => {
+    setInputFields({ ...inputFields, [e.target.name]: e.target.value });
+  };
+  const resetFormInputs = () => {
+    setInputFields({
+      email: "",
+      password: "",
+    });
+  };
   const onSubmit = (e) => {
     e.preventDefault();
     const { email, password } = inputFields;
+
     const user = {
       email,
       password,
     };
     login(user);
   };
+
+  useEffect(() => {
+    if (error.id === "LOGIN_FAIL") {
+      setServerError({ msg: error.msg.msg });
+    } else {
+      setServerError({ msg: null });
+    }
+
+    if (modalOpen && auth.isAuthenticated) {
+      toggle();
+    }
+  }, [error]);
 
   return (
     <>
@@ -40,6 +65,9 @@ const LoginModal = ({ login }) => {
       </NavLink>
       <Modal isOpen={modalOpen} toggle={toggle}>
         <ModalHeader toggle={toggle}>Log in to manage inventory</ModalHeader>
+        {serverError.msg ? (
+          <Alert color="danger">{serverError.msg}</Alert>
+        ) : null}
         <ModalBody>
           <Form onSubmit={onSubmit}>
             <TextInput
@@ -49,6 +77,7 @@ const LoginModal = ({ login }) => {
               value={inputFields.email}
               placeHolder="Please enter your email"
               onChange={onChange}
+              type="text"
             />
             <TextInput
               label="Password"
@@ -57,6 +86,7 @@ const LoginModal = ({ login }) => {
               value={inputFields.password}
               placeHolder="Please enter password"
               onChange={onChange}
+              type="password"
             />
 
             <Button
@@ -85,4 +115,4 @@ LoginModal.propTypes = {
   login: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps, { login })(LoginModal);
+export default connect(mapStateToProps, { login, clearErrors })(LoginModal);

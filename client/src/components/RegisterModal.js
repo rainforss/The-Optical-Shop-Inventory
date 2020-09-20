@@ -6,13 +6,21 @@ import {
   ModalBody,
   Form,
   NavLink,
+  Alert,
 } from "reactstrap";
 import { connect } from "react-redux";
-import { register } from "../actions/authActions";
+import { register, resetRegisterStatus } from "../actions/authActions";
+import { clearErrors } from "../actions/errorActions";
 import TextInput from "./common/TextInput";
 import PropTypes from "prop-types";
 
-const RegisterModal = ({ register }) => {
+const RegisterModal = ({
+  register,
+  error,
+  auth,
+  clearErrors,
+  resetRegisterStatus,
+}) => {
   const [modalOpen, SetModalOpen] = useState(false);
   const [inputFields, setInputFields] = useState({
     name: "",
@@ -21,9 +29,11 @@ const RegisterModal = ({ register }) => {
     confirm: "",
   });
   const [inputErrors, setInputErrors] = useState({});
+  const [serverError, setServerError] = useState({});
   const [inputModified, setInputModified] = useState({});
   const toggle = () => {
     SetModalOpen(!modalOpen);
+    clearErrors();
     resetFormInputs();
     setInputModified({});
   };
@@ -127,14 +137,24 @@ const RegisterModal = ({ register }) => {
       password,
     };
     register(newUser);
-    toggle();
-    setInputModified({});
-    resetFormInputs();
   };
 
   useEffect(() => {
     validate();
   }, [inputFields]);
+
+  useEffect(() => {
+    if (error.id === "REGISTER_FAIL") {
+      setServerError({ msg: error.msg.msg });
+    } else {
+      setServerError({ msg: null });
+    }
+
+    if (modalOpen && auth.registerSuccess) {
+      resetRegisterStatus();
+      toggle();
+    }
+  }, [error, auth.registerSuccess]);
 
   //Client side validation finished, need server side error response implementation
 
@@ -145,6 +165,9 @@ const RegisterModal = ({ register }) => {
       </NavLink>
       <Modal isOpen={modalOpen} toggle={toggle}>
         <ModalHeader toggle={toggle}>Register a management account</ModalHeader>
+        {serverError.msg ? (
+          <Alert color="danger">{serverError.msg}</Alert>
+        ) : null}
         <ModalBody>
           <Form onSubmit={onSubmit}>
             <TextInput
@@ -155,6 +178,7 @@ const RegisterModal = ({ register }) => {
               placeHolder="Please enter your name"
               onChange={onChange}
               error={inputErrors.name}
+              type="text"
             />
             <TextInput
               label="Email Address"
@@ -164,6 +188,7 @@ const RegisterModal = ({ register }) => {
               placeHolder="Please enter your email"
               onChange={onChange}
               error={inputErrors.email}
+              type="text"
             />
             <TextInput
               label="Password"
@@ -173,6 +198,7 @@ const RegisterModal = ({ register }) => {
               placeHolder="Please enter password"
               onChange={onChange}
               error={inputErrors.password}
+              type="password"
             />
             <TextInput
               label="Confirm Password"
@@ -182,6 +208,7 @@ const RegisterModal = ({ register }) => {
               placeHolder="Please confirm password"
               onChange={onChange}
               error={inputErrors.confirm}
+              type="password"
             />
 
             <Button
@@ -208,6 +235,12 @@ RegisterModal.propTypes = {
   auth: PropTypes.object.isRequired,
   error: PropTypes.object.isRequired,
   register: PropTypes.func.isRequired,
+  clearErrors: PropTypes.func.isRequired,
+  resetRegisterStatus: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps, { register })(RegisterModal);
+export default connect(mapStateToProps, {
+  register,
+  clearErrors,
+  resetRegisterStatus,
+})(RegisterModal);

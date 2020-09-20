@@ -12,7 +12,9 @@ export const getItems = () => async (dispatch) => {
       items: res.data,
     });
   } catch (err) {
-    dispatch(returnErrors(err.response.data, err.response.status));
+    dispatch(
+      returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
+    );
   }
 };
 
@@ -27,7 +29,9 @@ export const deleteItem = (itemId) => async (dispatch, getState) => {
       itemId: itemId,
     });
   } catch (err) {
-    dispatch(returnErrors(err.response.data, err.response.status));
+    dispatch(
+      returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
+    );
   }
 };
 
@@ -43,8 +47,19 @@ export const addItem = (newItem) => async (dispatch, getState) => {
       newItem: res.data,
     });
   } catch (err) {
-    dispatch(returnErrors(err.response.data, err.response.status));
+    dispatch(
+      returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
+    );
+    dispatch({
+      type: types.ADD_ITEM_FAIL,
+    });
   }
+};
+
+export const resetStatus = () => {
+  return {
+    type: types.RESET_ADD_STATUS,
+  };
 };
 
 export const setItemsLoading = () => {

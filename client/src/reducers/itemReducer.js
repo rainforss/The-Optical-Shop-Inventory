@@ -3,6 +3,7 @@ import * as types from "../actions/types";
 const initialState = {
   items: [],
   loading: false,
+  actionSuccess: null,
 };
 
 export default function (state = initialState, action) {
@@ -18,10 +19,21 @@ export default function (state = initialState, action) {
         ...state,
         items: state.items.filter((item) => item._id !== action.itemId),
       };
+    case types.ADD_ITEM_FAIL:
+      return {
+        ...state,
+        actionSuccess: false,
+      };
     case types.ADD_ITEM:
       return {
         ...state,
         items: [action.newItem, ...state.items],
+        actionSuccess: true,
+      };
+    case types.RESET_ADD_STATUS:
+      return {
+        ...state,
+        actionSuccess: null,
       };
     case types.ITEMS_LOADING:
       return {

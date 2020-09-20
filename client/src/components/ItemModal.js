@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, ModalHeader, ModalBody, Form, Alert } from "reactstrap";
 import { connect } from "react-redux";
-import { addItem } from "../actions/itemActions";
+import { addItem, resetStatus } from "../actions/itemActions";
+import { clearErrors } from "../actions/errorActions";
 import TextInput from "./common/TextInput";
 import SelectInput from "./common/SelectInput";
 import PropTypes from "prop-types";
 
-const ItemModal = ({ addItem, isAuthenticated }) => {
-  const [modalOpen, SetModalOpen] = useState(false);
+const ItemModal = ({
+  addItem,
+  isAuthenticated,
+  error,
+  item,
+  clearErrors,
+  resetStatus,
+}) => {
+  const [modalOpen, setModalOpen] = useState(false);
   const [itemInfo, setItemInfo] = useState({
     name: "",
     barcode: "",
@@ -18,9 +26,11 @@ const ItemModal = ({ addItem, isAuthenticated }) => {
     itemType: "Sunglasses",
   });
   const [inputErrors, setInputErrors] = useState({});
+  const [serverError, setServerError] = useState({});
   const [inputModified, setInputModified] = useState({});
   const toggle = () => {
-    SetModalOpen(!modalOpen);
+    setModalOpen(!modalOpen);
+    clearErrors();
     resetFormInputs();
     setInputModified({});
   };
@@ -133,14 +143,26 @@ const ItemModal = ({ addItem, isAuthenticated }) => {
       itemType: itemInfo.itemType,
     };
     addItem(newItem);
-    toggle();
-    setInputModified({});
-    resetFormInputs();
   };
 
   useEffect(() => {
     validate();
   }, [itemInfo]);
+
+  useEffect(() => {
+    if (error.id === "ITEM_ERROR") {
+      setServerError({ msg: error.msg.msg });
+    } else {
+      setServerError({ msg: null });
+    }
+    if (modalOpen) {
+      if (item.actionSuccess) {
+        resetStatus();
+        toggle();
+      }
+    }
+    console.log(modalOpen);
+  }, [error, item.actionSuccess, modalOpen]);
   return (
     <div>
       {isAuthenticated ? (
@@ -155,6 +177,9 @@ const ItemModal = ({ addItem, isAuthenticated }) => {
 
       <Modal isOpen={modalOpen} toggle={toggle}>
         <ModalHeader toggle={toggle}>Add item to inventory</ModalHeader>
+        {serverError.msg ? (
+          <Alert color="danger">{serverError.msg}</Alert>
+        ) : null}
         <ModalBody>
           <Form onSubmit={onSubmit}>
             <TextInput
@@ -165,6 +190,7 @@ const ItemModal = ({ addItem, isAuthenticated }) => {
               placeHolder="New item name"
               onChange={onChange}
               error={inputErrors.name}
+              type="text"
             />
             <TextInput
               label="Item Barcode"
@@ -174,24 +200,27 @@ const ItemModal = ({ addItem, isAuthenticated }) => {
               placeHolder="New item barcode"
               onChange={onChange}
               error={inputErrors.barcode}
+              type="text"
             />
             <TextInput
               label="Row position"
               name="row"
               id="row"
               value={itemInfo.row}
-              placeHolder="Enter row position"
+              placeHolder="Enter row number"
               onChange={onChange}
               error={inputErrors.row}
+              type="text"
             />
             <TextInput
               label="Column position"
               name="column"
               id="column"
               value={itemInfo.column}
-              placeHolder="Enter column position"
+              placeHolder="Enter column number"
               onChange={onChange}
               error={inputErrors.column}
+              type="text"
             />
             <TextInput
               label="Price"
@@ -201,6 +230,7 @@ const ItemModal = ({ addItem, isAuthenticated }) => {
               placeHolder="Enter item price"
               onChange={onChange}
               error={inputErrors.price}
+              type="text"
             />
             <SelectInput
               label="In Stock"
@@ -236,11 +266,16 @@ const ItemModal = ({ addItem, isAuthenticated }) => {
 const mapStateToProps = (state) => ({
   item: state.item,
   isAuthenticated: state.auth.isAuthenticated,
+  error: state.error,
 });
 
 ItemModal.propTypes = {
   item: PropTypes.object.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
+  error: PropTypes.object.isRequired,
+  resetStatus: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps, { addItem })(React.memo(ItemModal));
+export default connect(mapStateToProps, { addItem, clearErrors, resetStatus })(
+  React.memo(ItemModal)
+);

@@ -1,12 +1,12 @@
 import React from "react";
 import { FormGroup, Label, Input, Alert } from "reactstrap";
 
-const TextInput = ({ label, name, id, placeHolder, onChange, error }) => {
+const TextInput = ({ label, name, id, placeHolder, onChange, error, type }) => {
   return (
     <FormGroup>
       <Label for={id}>{label}</Label>
       <Input
-        type="text"
+        type={type}
         name={name}
         id={id}
         placeholder={placeHolder}

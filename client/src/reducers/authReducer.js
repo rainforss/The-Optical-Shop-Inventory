@@ -51,6 +51,11 @@ export default function (state = initialState, action) {
         ...state,
         registerSuccess: false,
       };
+    case types.RESET_REGISTER_STATUS:
+      return {
+        ...state,
+        registerSuccess: null,
+      };
 
     default:
       return state;

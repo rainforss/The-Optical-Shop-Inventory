@@ -1,4 +1,3 @@
-import axios from "axios";
 import * as types from "./types";
 
 export const returnErrors = (msg, status, id = null) => {
