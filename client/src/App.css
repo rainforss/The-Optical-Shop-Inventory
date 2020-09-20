@@ -17,3 +17,20 @@
   opacity: 0.01;
   transition: opacity 1s ease-in;
 }
+
+.item-card {
+  height: 250px;
+  width: 30%;
+}
+
+@media screen and (max-width: 1200px) {
+  .item-card {
+    width: 45%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .item-card {
+    width: 90%;
+  }
+}

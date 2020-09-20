@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const verify = require("../../utilities/verifyToken");
 const Item = require("../../model/item");
-const User = require("../../model/User");
+const validate = require("../../validation");
 
 //@route GET api/items
 //@desc Get all inventory items
@@ -20,12 +20,23 @@ router.get("/", async (req, res) => {
 });
 
 //@route GET api/items
+//@desc Search inventory by name
+//@access Public
+
+//@Route GET api/items
+//@desc Search inventory by barcode
+//@access Public
 
 //@route POST api/items
 //@desc Add an item
 //@access Private
 
 router.post("/", verify, async (req, res) => {
+  //Validate input data before sending
+  const error = validate.itemValidation(req.body);
+  if (error) {
+    return res.status(400).json({ msg: error.details[0].message });
+  }
   //const currentUser = await User.findOne({ _id: req.user });
   const newItem = new Item({
     name: req.body.name,
@@ -54,6 +65,37 @@ router.post("/", verify, async (req, res) => {
     res
       .status(500)
       .json({ success: false, msg: `${err},Item was not added successfully.` });
+  }
+});
+
+//@route PUT api/items/:id
+//@desc Update an item
+//@access Private
+
+router.put("/:id", verify, async (req, res) => {
+  //Validate input data before sending
+  const error = validate.itemValidation(req.body);
+  if (error) {
+    return res.status(400).json({ msg: error.details[0].message });
+  }
+  //Find the item to update
+  try {
+    const toBeUpdated = await Item.findById(req.params.id);
+    toBeUpdated.name = req.body.name;
+    toBeUpdated.barcode = req.body.barcode;
+    toBeUpdated.price = req.body.price;
+    toBeUpdated.row = req.body.row;
+    toBeUpdated.column = req.body.column;
+    toBeUpdated.inStock = req.body.inStock;
+    toBeUpdated.itemType = req.body.itemType;
+    await toBeUpdated.save().exec();
+    res
+      .status(200)
+      .json({ success: true, msg: "Update was performed successfully" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: `${err}, update failed, please try again` });
   }
 });
 
