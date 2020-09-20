@@ -22,7 +22,9 @@ const ItemList = ({ getItems, deleteItem, item, isAuthenticated }) => {
         {items.map(({ _id, name, barcode, price, itemType }) => (
           <CSSTransition key={_id} timeout={500} classNames="fade">
             <Card className="item-card mt-4 mb-4 d-flex flex-column justify-content-around align-items-center">
-              <CardTitle className="text-center">{name}</CardTitle>
+              <CardTitle className="text-center font-weight-bold">
+                {name}
+              </CardTitle>
               <CardSubtitle className="text-center">
                 Barcode: {barcode}
               </CardSubtitle>
