@@ -37,9 +37,10 @@ export const deleteItem = (itemId) => async (dispatch, getState) => {
 
 export const addItem = (newItem) => async (dispatch, getState) => {
   try {
+    const body = JSON.stringify(newItem);
     const res = await axios.post(
       "/api/items",
-      newItem,
+      body,
       tokenConfiguration(getState)
     );
     dispatch({
@@ -61,9 +62,10 @@ export const updateItem = (updatedItem, itemId) => async (
   getState
 ) => {
   try {
+    const body = JSON.stringify(updatedItem);
     const res = await axios.put(
       `api/items/${itemId}`,
-      updatedItem,
+      body,
       tokenConfiguration(getState)
     );
     dispatch({
