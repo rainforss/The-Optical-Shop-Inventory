@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", verify, async (req, res) => {
   //Validate input data before sending
-  const error = validate.itemValidation(req.body);
+  const { error } = validate.itemValidation(req.body);
   if (error) {
     return res.status(400).json({ msg: error.details[0].message });
   }
@@ -74,12 +74,22 @@ router.post("/", verify, async (req, res) => {
 
 router.put("/:id", verify, async (req, res) => {
   //Validate input data before sending
-  const error = validate.itemValidation(req.body);
+  const { error } = validate.itemValidation(req.body);
   if (error) {
     return res.status(400).json({ msg: error.details[0].message });
   }
   //Find the item to update
   try {
+    const itemAtSamePosition = await Item.findOne({
+      row: req.body.row,
+      column: req.body.column,
+    });
+    if (itemAtSamePosition)
+      return res.status(400).json({
+        success: false,
+        msg:
+          "Item with same location already exists in the inventory, pick another location",
+      });
     const toBeUpdated = await Item.findById(req.params.id);
     toBeUpdated.name = req.body.name;
     toBeUpdated.barcode = req.body.barcode;
@@ -88,10 +98,8 @@ router.put("/:id", verify, async (req, res) => {
     toBeUpdated.column = req.body.column;
     toBeUpdated.inStock = req.body.inStock;
     toBeUpdated.itemType = req.body.itemType;
-    await toBeUpdated.save().exec();
-    res
-      .status(200)
-      .json({ success: true, msg: "Update was performed successfully" });
+    const updatedItem = await toBeUpdated.save();
+    res.status(200).json(updatedItem);
   } catch (err) {
     res
       .status(500)

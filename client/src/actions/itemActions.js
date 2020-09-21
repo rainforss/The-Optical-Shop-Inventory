@@ -56,6 +56,30 @@ export const addItem = (newItem) => async (dispatch, getState) => {
   }
 };
 
+export const updateItem = (updatedItem, itemId) => async (
+  dispatch,
+  getState
+) => {
+  try {
+    const res = await axios.put(
+      `api/items/${itemId}`,
+      updatedItem,
+      tokenConfiguration(getState)
+    );
+    dispatch({
+      type: types.UPDATE_ITEM,
+      updatedItem: res.data,
+    });
+  } catch (err) {
+    dispatch(
+      returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
+    );
+    dispatch({
+      type: types.UPDATE_ITEM_FAIL,
+    });
+  }
+};
+
 export const resetStatus = () => {
   return {
     type: types.RESET_ADD_STATUS,

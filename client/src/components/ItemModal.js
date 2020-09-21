@@ -136,8 +136,8 @@ const ItemModal = ({
     const newItem = {
       name: itemInfo.name,
       barcode: itemInfo.barcode,
-      row: parseInt(itemInfo.row),
-      column: parseInt(itemInfo.column),
+      row: itemInfo.row,
+      column: itemInfo.column,
       price: itemInfo.price,
       inStock: itemInfo.inStock === "YES" ? true : false,
       itemType: itemInfo.itemType,
@@ -161,7 +161,6 @@ const ItemModal = ({
         toggle();
       }
     }
-    console.log(modalOpen);
   }, [error, item.actionSuccess, modalOpen]);
   return (
     <div>

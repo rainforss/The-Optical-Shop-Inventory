@@ -30,6 +30,22 @@ export default function (state = initialState, action) {
         items: [action.newItem, ...state.items],
         actionSuccess: true,
       };
+    case types.UPDATE_ITEM:
+      const replaceIndex = state.items.findIndex(
+        (item) => item._id === action.updatedItem._id
+      );
+      const items = [...state.items];
+      items.splice(replaceIndex, 1, action.updatedItem);
+      return {
+        ...state,
+        items: [...items],
+        actionSuccess: true,
+      };
+    case types.UPDATE_ITEM_FAIL:
+      return {
+        ...state,
+        actionSuccess: false,
+      };
     case types.RESET_ADD_STATUS:
       return {
         ...state,

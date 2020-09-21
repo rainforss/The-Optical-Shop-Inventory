@@ -14,11 +14,11 @@ const ItemSchema = new mongoose.Schema(
       min: 4,
     },
     row: {
-      type: Number,
+      type: String,
       required: true,
     },
     column: {
-      type: Number,
+      type: String,
       required: true,
     },
     price: {
