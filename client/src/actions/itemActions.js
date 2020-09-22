@@ -35,9 +35,22 @@ export const deleteItem = (itemId) => async (dispatch, getState) => {
   }
 };
 
-export const addItem = (newItem) => async (dispatch, getState) => {
+export const addItem = (newItem, newFile = null) => async (
+  dispatch,
+  getState
+) => {
   try {
+    if (newFile) {
+      const imgResponse = await axios.post(
+        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
+        newFile
+      );
+      newItem.imageURL = imgResponse.data.secure_url;
+      console.log(newItem);
+    }
+
     const body = JSON.stringify(newItem);
+    console.log(body);
     const res = await axios.post(
       "/api/items",
       body,
@@ -53,6 +66,26 @@ export const addItem = (newItem) => async (dispatch, getState) => {
     );
     dispatch({
       type: types.ADD_ITEM_FAIL,
+    });
+  }
+};
+
+export const uploadItemImg = (data) => async (dispatch) => {
+  try {
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/rainforss/image/upload",
+      data
+    );
+    dispatch({
+      type: types.UPLOAD_IMAGE,
+      response: res.data,
+    });
+  } catch (err) {
+    dispatch(
+      returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
+    );
+    dispatch({
+      type: types.UPLOAD_IMAGE_FAIL,
     });
   }
 };

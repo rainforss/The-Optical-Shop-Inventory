@@ -46,7 +46,8 @@ router.post("/", verify, async (req, res) => {
     price: req.body.price,
     itemType: req.body.itemType,
     inStock: req.body.inStock,
-    //lastModifiedBy: currentUser.email,
+    imageURL: req.body.imageURL,
+    lastModifiedBy: req.user,
   });
   try {
     const itemAtSamePosition = await Item.findOne({
@@ -98,6 +99,7 @@ router.put("/:id", verify, async (req, res) => {
     toBeUpdated.column = req.body.column;
     toBeUpdated.inStock = req.body.inStock;
     toBeUpdated.itemType = req.body.itemType;
+    toBeUpdated.lastModifiedBy = req.user;
     const updatedItem = await toBeUpdated.save();
     res.status(200).json(updatedItem);
   } catch (err) {

@@ -25,6 +25,7 @@ const ItemModal = ({
     inStock: "YES",
     itemType: "Sunglasses",
   });
+  const [itemImage, setItemImage] = useState();
   const [inputErrors, setInputErrors] = useState({});
   const [serverError, setServerError] = useState({});
   const [inputModified, setInputModified] = useState({});
@@ -58,8 +59,8 @@ const ItemModal = ({
     } else {
       errors.name = "";
     }
-    if (inputModified.barcode && itemInfo.barcode.trim().length < 4) {
-      errors.barcode = "Barcode contains at least 4 digits";
+    if (inputModified.barcode && itemInfo.barcode.trim().length < 6) {
+      errors.barcode = "Barcode contains at least 6 digits";
     } else {
       errors.barcode = "";
     }
@@ -92,8 +93,8 @@ const ItemModal = ({
     } else {
       errors.name = "";
     }
-    if (itemInfo.barcode.trim().length < 4) {
-      errors.barcode = "Barcode contains at least 4 digits";
+    if (itemInfo.barcode.trim().length < 6) {
+      errors.barcode = "Barcode contains at least 6 digits";
       errorNumber++;
     } else {
       errors.barcode = "";
@@ -133,6 +134,11 @@ const ItemModal = ({
     });
     const errorFree = validateForm();
     if (!errorFree) return;
+    const file = new FormData();
+    file.append("file", itemImage);
+    file.append("upload_preset", "opticalshop");
+    file.append("public_id", `${itemInfo.name}AND${itemInfo.barcode}`);
+    file.append("cloud_name", "rainforss");
     const newItem = {
       name: itemInfo.name,
       barcode: itemInfo.barcode,
@@ -142,7 +148,7 @@ const ItemModal = ({
       inStock: itemInfo.inStock === "YES" ? true : false,
       itemType: itemInfo.itemType,
     };
-    addItem(newItem);
+    addItem(newItem, file);
   };
 
   useEffect(() => {
@@ -247,6 +253,16 @@ const ItemModal = ({
               onChange={onChange}
               options={["Sunglasses", "Eyeglasses"]}
             />
+            <TextInput
+              label="Upload Image"
+              name="file"
+              id="file"
+              type="file"
+              onChange={(e) => {
+                setItemImage(e.target.files[0]);
+                console.log(e.target.files);
+              }}
+            />
             <Button
               type="submit"
               color="dark"
@@ -275,6 +291,8 @@ ItemModal.propTypes = {
   resetStatus: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps, { addItem, clearErrors, resetStatus })(
-  React.memo(ItemModal)
-);
+export default connect(mapStateToProps, {
+  addItem,
+  clearErrors,
+  resetStatus,
+})(React.memo(ItemModal));

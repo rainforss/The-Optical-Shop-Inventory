@@ -8,8 +8,8 @@ export default function validate(itemInfo, setErrors) {
       } else {
         errors.name = "";
       }
-      if (inputModified.barcode && itemInfo.barcode.trim().length < 4) {
-        errors.barcode = "Barcode contains at least 4 digits";
+      if (inputModified.barcode && itemInfo.barcode.trim().length < 6) {
+        errors.barcode = "Barcode contains at least 6 digits";
       } else {
         errors.barcode = "";
       }
@@ -41,8 +41,8 @@ export default function validate(itemInfo, setErrors) {
       } else {
         errors.name = "";
       }
-      if (itemInfo.barcode.trim().length < 4) {
-        errors.barcode = "Barcode contains at least 4 digits";
+      if (itemInfo.barcode.trim().length < 6) {
+        errors.barcode = "Barcode contains at least 6 digits";
         errorNumber++;
       } else {
         errors.barcode = "";

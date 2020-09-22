@@ -35,6 +35,11 @@ const ItemSchema = new mongoose.Schema(
       required: true,
       default: true,
     },
+    imageURL: {
+      type: String,
+      required: true,
+      default: "test",
+    },
     lastModifiedBy: {
       type: String,
       required: true,

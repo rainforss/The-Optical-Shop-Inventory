@@ -25,6 +25,7 @@ module.exports = {
       price: joi.number().positive().max(2000).required(),
       itemType: joi.string().alphanum().required(),
       inStock: joi.bool().required(),
+      imageURL: joi.string(),
     });
     return schema.validate(data);
   },

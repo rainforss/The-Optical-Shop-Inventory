@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Container, Button, CardTitle, CardSubtitle, Card } from "reactstrap";
+import {
+  Container,
+  Button,
+  CardTitle,
+  CardSubtitle,
+  Card,
+  CardImg,
+} from "reactstrap";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { connect } from "react-redux";
 import {
@@ -93,9 +100,16 @@ const ItemList = ({
   return (
     <Container>
       <TransitionGroup className="item-list d-flex flex-wrap justify-content-start">
-        {items.map(({ _id, name, barcode, price, row, column }) => (
+        {items.map(({ _id, name, barcode, price, row, column, imageURL }) => (
           <CSSTransition key={_id} timeout={500} classNames="fade">
             <Card className="item-card mt-4 mb-4 ml-2 mr-2 d-flex flex-column justify-content-around align-items-center p-2">
+              <CardImg
+                top
+                width="100%"
+                height="40%"
+                src={imageURL}
+                alt="Item image"
+              />
               <CardTitle className="text-center font-weight-bold">
                 {name}
               </CardTitle>
