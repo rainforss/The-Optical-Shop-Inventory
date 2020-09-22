@@ -42,7 +42,7 @@ export const addItem = (newItem, newFile = null) => async (
   try {
     if (newFile) {
       const imgResponse = await axios.post(
-        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
+        process.env.REACT_APP_CLOUDINARY_API,
         newFile
       );
       newItem.imageURL = imgResponse.data.secure_url;
