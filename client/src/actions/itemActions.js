@@ -18,6 +18,32 @@ export const getItems = () => async (dispatch) => {
   }
 };
 
+export const searchTerm = (keyword) => async (dispatch) => {
+  dispatch(setItemsLoading());
+  try {
+    let res;
+    let body;
+    if (!keyword) {
+      res = await axios.get("/api/items");
+    } else {
+      // body = JSON.stringify({ query: keyword });
+      const options = {
+        headers: { "Content-Type": "application/json" },
+      };
+      body = JSON.stringify({ query: keyword });
+      res = await axios.post("/api/items/search", body, options);
+    }
+    dispatch({
+      type: types.SEARCH_ITEMS,
+      items: res.data,
+    });
+  } catch (err) {
+    dispatch(
+      returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
+    );
+  }
+};
+
 export const deleteItem = (itemId) => async (dispatch, getState) => {
   try {
     const res = await axios.delete(
@@ -46,11 +72,9 @@ export const addItem = (newItem, newFile = null) => async (
         newFile
       );
       newItem.imageURL = imgResponse.data.secure_url;
-      console.log(newItem);
     }
 
     const body = JSON.stringify(newItem);
-    console.log(body);
     const res = await axios.post(
       "/api/items",
       body,

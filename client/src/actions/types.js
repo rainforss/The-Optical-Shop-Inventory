@@ -1,4 +1,5 @@
 export const GET_ITEMS = "GET_ITEMS";
+export const SEARCH_ITEMS = "SEARCH_ITEMS";
 export const ADD_ITEM = "ADD_ITEM";
 export const ADD_ITEM_FAIL = "ADD_ITEM_FAIL";
 export const UPLOAD_IMAGE = "UPLOAD_IMAGE";

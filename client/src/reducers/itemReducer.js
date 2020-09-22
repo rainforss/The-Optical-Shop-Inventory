@@ -16,6 +16,12 @@ export default function (state = initialState, action) {
         items: action.items,
         loading: false,
       };
+    case types.SEARCH_ITEMS:
+      return {
+        ...state,
+        items: action.items,
+        loading: false,
+      };
     case types.DELETE_ITEM:
       return {
         ...state,

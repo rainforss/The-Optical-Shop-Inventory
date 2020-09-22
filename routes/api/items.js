@@ -23,6 +23,24 @@ router.get("/", async (req, res) => {
 //@desc Search inventory by name
 //@access Public
 
+router.post("/search", async (req, res) => {
+  try {
+    const searchPattern = RegExp(`${req.body.query}`, "i");
+    const items = await Item.find({
+      $or: [
+        { name: { $regex: searchPattern } },
+        { barcode: { $regex: searchPattern } },
+      ],
+    });
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      msg: `${err.message}. Server internal error. Cannot handle request at the moment`,
+    });
+  }
+});
+
 //@Route GET api/items
 //@desc Search inventory by barcode
 //@access Public

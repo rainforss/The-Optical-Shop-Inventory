@@ -14,11 +14,13 @@ import {
   deleteItem,
   updateItem,
   resetStatus,
+  searchTerm,
 } from "../actions/itemActions";
 import { clearErrors } from "../actions/errorActions";
 import PropTypes from "prop-types";
 import ModifyModal from "./common/ModifyModal";
 import validate from "./common/validation";
+import SearchBar from "./common/SearchBar";
 
 const ItemList = ({
   getItems,
@@ -26,6 +28,7 @@ const ItemList = ({
   item,
   isAuthenticated,
   updateItem,
+  searchTerm,
   resetStatus,
   error,
   clearErrors,
@@ -36,6 +39,7 @@ const ItemList = ({
   const [inputErrors, setInputErrors] = useState({});
   const [currentItem, setCurrentItem] = useState({});
   const [inputModified, setInputModified] = useState({});
+  const [keyWords, setKeyWords] = useState("");
 
   const onDelete = (e) => {
     const id = e.target.name;
@@ -84,7 +88,8 @@ const ItemList = ({
     validate(currentItem, setInputErrors).realTime(inputModified);
   }, [currentItem]);
   useEffect(() => {
-    getItems();
+    searchTerm(keyWords);
+    console.log(keyWords);
     if (error.id === "ITEM_ERROR") {
       setServerError({ msg: error.msg.msg });
     } else {
@@ -96,67 +101,73 @@ const ItemList = ({
         toggle();
       }
     }
-  }, [error, item.actionSuccess, modalOpen]);
+  }, [error, keyWords, item.actionSuccess, modalOpen]);
   return (
-    <Container>
-      <TransitionGroup className="item-list d-flex flex-wrap justify-content-start">
-        {items.map(({ _id, name, barcode, price, row, column, imageURL }) => (
-          <CSSTransition key={_id} timeout={500} classNames="fade">
-            <Card className="item-card mt-4 mb-4 ml-2 mr-2 d-flex flex-column justify-content-around align-items-center p-2">
-              <CardImg
-                top
-                width="100%"
-                height="40%"
-                src={imageURL}
-                alt="Item image"
-              />
-              <CardTitle className="text-center font-weight-bold">
-                {name}
-              </CardTitle>
-              <CardSubtitle className="text-center">
-                Barcode: {barcode}
-              </CardSubtitle>
-              <CardSubtitle className="text-center">
-                Price: {price} CAD
-              </CardSubtitle>
-              <CardSubtitle className="text-center">
-                Position: {row},{column}
-              </CardSubtitle>
-              {isAuthenticated ? (
-                <Button
-                  className="remove-btn"
-                  color="danger"
-                  name={_id}
-                  onClick={onDelete}
-                >
-                  Remove Item
-                </Button>
-              ) : (
-                ""
-              )}
-              <Button
-                className="update-btn"
-                color="info"
-                name={_id}
-                onClick={onView}
-              >
-                View Details
-              </Button>
-            </Card>
-          </CSSTransition>
-        ))}
-      </TransitionGroup>
-      <ModifyModal
-        modalOpen={modalOpen}
-        toggle={toggle}
-        currentItem={currentItem}
-        inputErrors={inputErrors}
-        onChange={onChange}
-        onSubmit={onSubmit}
-        serverError={serverError}
-        isAuthenticated={isAuthenticated}
+    <>
+      <SearchBar
+        onChange={(e) => setKeyWords(e.target.value)}
+        value={keyWords}
       />
-    </Container>
+      <Container>
+        <TransitionGroup className="item-list d-flex flex-wrap justify-content-start">
+          {items.map(({ _id, name, barcode, price, row, column, imageURL }) => (
+            <CSSTransition key={_id} timeout={500} classNames="fade">
+              <Card className="item-card mt-4 mb-4 ml-2 mr-2 d-flex flex-column justify-content-around align-items-center p-2">
+                <CardImg
+                  top
+                  width="100%"
+                  height="40%"
+                  src={imageURL}
+                  alt="Item image"
+                />
+                <CardTitle className="text-center font-weight-bold">
+                  {name}
+                </CardTitle>
+                <CardSubtitle className="text-center">
+                  Barcode: {barcode}
+                </CardSubtitle>
+                <CardSubtitle className="text-center">
+                  Price: {price} CAD
+                </CardSubtitle>
+                <CardSubtitle className="text-center">
+                  Position: {row},{column}
+                </CardSubtitle>
+                {isAuthenticated ? (
+                  <Button
+                    className="remove-btn"
+                    color="danger"
+                    name={_id}
+                    onClick={onDelete}
+                  >
+                    Remove Item
+                  </Button>
+                ) : (
+                  ""
+                )}
+                <Button
+                  className="update-btn"
+                  color="info"
+                  name={_id}
+                  onClick={onView}
+                >
+                  View Details
+                </Button>
+              </Card>
+            </CSSTransition>
+          ))}
+        </TransitionGroup>
+        <ModifyModal
+          modalOpen={modalOpen}
+          toggle={toggle}
+          currentItem={currentItem}
+          inputErrors={inputErrors}
+          onChange={onChange}
+          onSubmit={onSubmit}
+          serverError={serverError}
+          isAuthenticated={isAuthenticated}
+        />
+      </Container>
+    </>
   );
 };
 
@@ -168,6 +179,7 @@ ItemList.propTypes = {
   updateItem: PropTypes.func.isRequired,
   error: PropTypes.object.isRequired,
   resetStatus: PropTypes.func.isRequired,
+  searchTerm: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -180,6 +192,7 @@ export default connect(mapStateToProps, {
   getItems,
   deleteItem,
   updateItem,
+  searchTerm,
   resetStatus,
   clearErrors,
 })(React.memo(ItemList));

@@ -169,9 +169,9 @@ const ItemModal = ({
     }
   }, [error, item.actionSuccess, modalOpen]);
   return (
-    <div>
+    <>
       {isAuthenticated ? (
-        <Button color="dark" style={{ marginBottom: "5rem" }} onClick={toggle}>
+        <Button color="dark" onClick={toggle}>
           Add Item
         </Button>
       ) : (
@@ -274,7 +274,7 @@ const ItemModal = ({
           </Form>
         </ModalBody>
       </Modal>
-    </div>
+    </>
   );
 };
 
