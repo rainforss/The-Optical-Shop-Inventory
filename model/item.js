@@ -38,7 +38,12 @@ const ItemSchema = new mongoose.Schema(
     imageURL: {
       type: String,
       required: true,
-      default: "test",
+      default:
+        "https://res.cloudinary.com/rainforss/image/upload/v1600671896/sample.jpg",
+    },
+    imageID: {
+      type: String,
+      default: "",
     },
     lastModifiedBy: {
       type: String,

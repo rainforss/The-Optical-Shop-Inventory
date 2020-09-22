@@ -2,6 +2,17 @@ const router = require("express").Router();
 const verify = require("../../utilities/verifyToken");
 const Item = require("../../model/item");
 const validate = require("../../validation");
+const cloudinary = require("cloudinary").v2;
+const dotenv = require("dotenv");
+
+dotenv.config({ path: "./config/config.env" });
+
+//Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 //@route GET api/items
 //@desc Get all inventory items
@@ -65,6 +76,7 @@ router.post("/", verify, async (req, res) => {
     itemType: req.body.itemType,
     inStock: req.body.inStock,
     imageURL: req.body.imageURL,
+    imageID: req.body.imageID,
     lastModifiedBy: req.user,
   });
   try {
@@ -121,29 +133,45 @@ router.put("/:id", verify, async (req, res) => {
     const updatedItem = await toBeUpdated.save();
     res.status(200).json(updatedItem);
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({ success: false, msg: `${err}, update failed, please try again` });
   }
 });
 
-//@route DELETE api/items/:id
-//@desc Delete an item
+//@route POST api/items/:item
+//@desc Delete an item and its image if image is not default (on Cloudinary)
 //@access Private
 
-router.delete("/:id", verify, async (req, res) => {
+router.post("/:id", verify, async (req, res) => {
   try {
+    //Delete the image on Cloudinary if it is not the default image (non-default images have a public_id)
+    const { public_id } = req.body;
+    if (public_id) {
+      cloudinary.uploader.destroy(public_id);
+    }
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      msg: `${err}. Server error, please try again`,
+    });
+  }
+
+  try {
+    //If image deleted successfully or no image, then remove the item from database
     const toBeDeleted = await Item.findByIdAndDelete(req.params.id);
     res.json({
       success: true,
       msg: `${toBeDeleted.name} with barcode ${toBeDeleted.barcode} has been removed from the inventory`,
     });
   } catch (err) {
-    res.status(404).json({
+    return res.status(404).json({
       success: false,
       msg: `${err.message}. Item was not found in the current inventory`,
     });
   }
 });
+
+//@route POST api/items/
 
 module.exports = router;

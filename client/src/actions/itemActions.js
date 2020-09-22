@@ -44,10 +44,12 @@ export const searchTerm = (keyword) => async (dispatch) => {
   }
 };
 
-export const deleteItem = (itemId) => async (dispatch, getState) => {
+export const deleteItem = (itemId, imgId) => async (dispatch, getState) => {
   try {
-    const res = await axios.delete(
+    const body = JSON.stringify({ public_id: imgId });
+    const res = await axios.post(
       `/api/items/${itemId}`,
+      body,
       tokenConfiguration(getState)
     );
     dispatch({
@@ -61,17 +63,15 @@ export const deleteItem = (itemId) => async (dispatch, getState) => {
   }
 };
 
-export const addItem = (newItem, newFile = null) => async (
-  dispatch,
-  getState
-) => {
+export const addItem = (newItem, newFile) => async (dispatch, getState) => {
   try {
-    if (newFile) {
+    if (newFile.file) {
       const imgResponse = await axios.post(
-        process.env.REACT_APP_CLOUDINARY_API,
+        process.env.REACT_APP_CLOUDINARY_UPLOAD,
         newFile
       );
       newItem.imageURL = imgResponse.data.secure_url;
+      newItem.imageID = newFile.public_id;
     }
 
     const body = JSON.stringify(newItem);
@@ -96,10 +96,7 @@ export const addItem = (newItem, newFile = null) => async (
 
 export const uploadItemImg = (data) => async (dispatch) => {
   try {
-    const res = await axios.post(
-      "https://api.cloudinary.com/v1_1/rainforss/image/upload",
-      data
-    );
+    const res = await axios.post(process.env.REACT_APP_CLOUDINARY_UPLOAD, data);
     dispatch({
       type: types.UPLOAD_IMAGE,
       response: res.data,

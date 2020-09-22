@@ -7,6 +7,9 @@ const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 const validate = require("../../validation");
 const verify = require("../../utilities/verifyToken");
+const dotenv = require("dotenv");
+
+dotenv.config({ path: "./config/config.env" });
 
 //Register
 router.post("/register", async (req, res) => {

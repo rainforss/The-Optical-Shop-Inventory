@@ -43,7 +43,9 @@ const ItemList = ({
 
   const onDelete = (e) => {
     const id = e.target.name;
-    deleteItem(id);
+    const itemInfo = items.find((item) => item._id === id);
+    const imgId = itemInfo.imageID;
+    deleteItem(id, imgId);
   };
   const onChange = (e) => {
     setCurrentItem({
