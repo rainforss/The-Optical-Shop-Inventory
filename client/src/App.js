@@ -9,6 +9,7 @@ import ItemModal from "./components/ItemModal";
 import { Container } from "reactstrap";
 import { loadUser } from "./actions/authActions";
 
+//Need to optimize performance using Memo and UseCallBacks, awaits for implementation
 function App() {
   useEffect(() => {
     store.dispatch(loadUser());
