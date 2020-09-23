@@ -38,6 +38,7 @@ const ItemList = ({
   const [serverError, setServerError] = useState({});
   const [inputErrors, setInputErrors] = useState({});
   const [currentItem, setCurrentItem] = useState({});
+  const [itemImage, setItemImage] = useState();
   const [inputModified, setInputModified] = useState({});
   const [keyWords, setKeyWords] = useState("");
 
@@ -59,12 +60,24 @@ const ItemList = ({
     setModalOpen(!modalOpen);
     clearErrors();
     setInputModified({});
+    setItemImage();
   };
 
+  const changeImage = (e) => {
+    setItemImage(e.target.files[0]);
+  };
   const onSubmit = (e) => {
     e.preventDefault();
     const errorFree = validate(currentItem, setInputErrors).Form();
     if (!errorFree) return;
+    let file;
+    if (itemImage) {
+      file = new FormData();
+      file.append("file", itemImage);
+      file.append("upload_preset", "opticalshop");
+      file.append("public_id", `${currentItem.name}AND${currentItem.barcode}`);
+      file.append("cloud_name", "rainforss");
+    }
     const updatedItem = {
       name: currentItem.name,
       barcode: currentItem.barcode,
@@ -77,7 +90,8 @@ const ItemList = ({
           : false,
       itemType: currentItem.itemType,
     };
-    updateItem(updatedItem, currentItem._id);
+
+    updateItem(updatedItem, currentItem._id, file);
   };
 
   const onView = (e) => {
@@ -167,6 +181,8 @@ const ItemList = ({
           onSubmit={onSubmit}
           serverError={serverError}
           isAuthenticated={isAuthenticated}
+          changeImage={changeImage}
+          itemImage={itemImage}
         />
       </Container>
     </>

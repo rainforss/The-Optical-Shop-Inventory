@@ -1,5 +1,12 @@
 import React from "react";
-import { FormGroup, Label, Input, Alert } from "reactstrap";
+import {
+  FormGroup,
+  Label,
+  Input,
+  Alert,
+  FormText,
+  FormFeedback,
+} from "reactstrap";
 
 const TextInput = ({
   label,
@@ -10,6 +17,7 @@ const TextInput = ({
   error,
   type,
   value,
+  warning,
 }) => {
   return (
     <FormGroup>
@@ -21,12 +29,11 @@ const TextInput = ({
         placeholder={placeHolder}
         onChange={onChange}
         value={value}
+        valid={!error && value ? true : false}
+        invalid={error ? true : false}
       />
-      {error ? (
-        <Alert color="danger" style={{ fontSize: "0.8rem" }}>
-          {error}
-        </Alert>
-      ) : null}
+      <FormFeedback valid={!error}>{error}</FormFeedback>
+      {warning ? <FormText color="warning">{warning}</FormText> : null}
     </FormGroup>
   );
 };

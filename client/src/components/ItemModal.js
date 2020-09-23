@@ -49,6 +49,7 @@ const ItemModal = ({
       inStock: "YES",
       itemType: "Sunglasses",
     });
+    setItemImage();
   };
 
   const validate = () => {
@@ -135,10 +136,13 @@ const ItemModal = ({
     const errorFree = validateForm();
     if (!errorFree) return;
     const file = new FormData();
+    console.log(itemImage);
     file.append("file", itemImage);
+
     file.append("upload_preset", "opticalshop");
     file.append("public_id", `${itemInfo.name}AND${itemInfo.barcode}`);
     file.append("cloud_name", "rainforss");
+
     const newItem = {
       name: itemInfo.name,
       barcode: itemInfo.barcode,
@@ -168,6 +172,7 @@ const ItemModal = ({
       }
     }
   }, [error, item.actionSuccess, modalOpen]);
+
   return (
     <>
       {isAuthenticated ? (
@@ -260,8 +265,12 @@ const ItemModal = ({
               type="file"
               onChange={(e) => {
                 setItemImage(e.target.files[0]);
-                console.log(e.target.files);
               }}
+              warning={
+                itemImage
+                  ? null
+                  : "If no image is uploaded at this time, system will use a default image"
+              }
             />
             <Button
               type="submit"

@@ -4,8 +4,6 @@ const initialState = {
   items: [],
   loading: false,
   actionSuccess: null,
-  imageURL: null,
-  imgActionSuccess: null,
 };
 
 export default function (state = initialState, action) {
@@ -37,18 +35,6 @@ export default function (state = initialState, action) {
         ...state,
         items: [action.newItem, ...state.items],
         actionSuccess: true,
-      };
-    case types.UPLOAD_IMAGE:
-      return {
-        ...state,
-        imgActionSuccess: true,
-        imageURL: action.response,
-      };
-    case types.UPLOAD_IMAGE_FAIL:
-      return {
-        ...state,
-        imgActionSuccess: false,
-        imageURL: null,
       };
     case types.UPDATE_ITEM:
       const replaceIndex = state.items.findIndex(

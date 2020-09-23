@@ -105,15 +105,18 @@ router.post("/", verify, async (req, res) => {
 
 router.put("/:id", verify, async (req, res) => {
   //Validate input data before sending
-  const { error } = validate.itemValidation(req.body);
+  const { updatedItem, hasNewImage } = req.body;
+  const { error } = validate.itemValidation(updatedItem);
   if (error) {
     return res.status(400).json({ msg: error.details[0].message });
   }
-  //Find the item to update
+
   try {
+    //Find if the location is already occupied
     const itemAtSamePosition = await Item.findOne({
-      row: req.body.row,
-      column: req.body.column,
+      row: updatedItem.row,
+      column: updatedItem.column,
+      _id: { $ne: req.params.id },
     });
     if (itemAtSamePosition)
       return res.status(400).json({
@@ -121,17 +124,34 @@ router.put("/:id", verify, async (req, res) => {
         msg:
           "Item with same location already exists in the inventory, pick another location",
       });
+
+    //Then find the original item and construct the new item object
     const toBeUpdated = await Item.findById(req.params.id);
-    toBeUpdated.name = req.body.name;
-    toBeUpdated.barcode = req.body.barcode;
-    toBeUpdated.price = req.body.price;
-    toBeUpdated.row = req.body.row;
-    toBeUpdated.column = req.body.column;
-    toBeUpdated.inStock = req.body.inStock;
-    toBeUpdated.itemType = req.body.itemType;
+    toBeUpdated.name = updatedItem.name;
+    toBeUpdated.barcode = updatedItem.barcode;
+    toBeUpdated.price = updatedItem.price;
+    toBeUpdated.row = updatedItem.row;
+    toBeUpdated.column = updatedItem.column;
+    toBeUpdated.inStock = updatedItem.inStock;
+    toBeUpdated.itemType = updatedItem.itemType;
     toBeUpdated.lastModifiedBy = req.user;
-    const updatedItem = await toBeUpdated.save();
-    res.status(200).json(updatedItem);
+    //Update the image id and URL if new image updated
+    if (updatedItem.imageID && updatedItem.imageURL) {
+      toBeUpdated.imageID = updatedItem.imageID;
+      toBeUpdated.imageURL = updatedItem.imageURL;
+    }
+
+    //If image is being replaced, destroy the current non-default image on Cloudinary
+    if (hasNewImage) {
+      //Destroy if the current image is not the default file
+      if (toBeUpdated.imageID) {
+        cloudinary.uploader.destroy(toBeUpdated.imageID);
+      }
+    }
+
+    //Send new information back to the app for re-rendering
+    const afterUpdate = await toBeUpdated.save();
+    res.status(200).json(afterUpdate);
   } catch (err) {
     return res
       .status(500)

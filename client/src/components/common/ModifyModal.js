@@ -13,6 +13,8 @@ const ModifyModal = ({
   onChange,
   onSubmit,
   serverError,
+  changeImage,
+  itemImage,
 }) => {
   return (
     <div>
@@ -88,15 +90,30 @@ const ModifyModal = ({
               onChange={onChange}
               options={["Sunglasses", "Eyeglasses"]}
             />
+
             {isAuthenticated ? (
-              <Button
-                type="submit"
-                color="dark"
-                style={{ marginTop: "2rem" }}
-                block
-              >
-                Confirm Change
-              </Button>
+              <>
+                <TextInput
+                  label="Replace Image"
+                  name="file"
+                  id="file"
+                  type="file"
+                  onChange={changeImage}
+                  warning={
+                    itemImage
+                      ? null
+                      : "Choose new file if you wish to replace the old image"
+                  }
+                />
+                <Button
+                  type="submit"
+                  color="warning"
+                  style={{ marginTop: "2rem" }}
+                  block
+                >
+                  Confirm Change
+                </Button>
+              </>
             ) : null}
           </Form>
         </ModalBody>

@@ -26,6 +26,7 @@ module.exports = {
       itemType: joi.string().alphanum().required(),
       inStock: joi.bool().required(),
       imageURL: joi.string(),
+      imageID: joi.string().allow(""),
     });
     return schema.validate(data);
   },

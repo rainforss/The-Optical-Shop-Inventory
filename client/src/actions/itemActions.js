@@ -94,34 +94,38 @@ export const addItem = (newItem, newFile) => async (dispatch, getState) => {
   }
 };
 
-export const uploadItemImg = (data) => async (dispatch) => {
-  try {
-    const res = await axios.post(process.env.REACT_APP_CLOUDINARY_UPLOAD, data);
-    dispatch({
-      type: types.UPLOAD_IMAGE,
-      response: res.data,
-    });
-  } catch (err) {
-    dispatch(
-      returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
-    );
-    dispatch({
-      type: types.UPLOAD_IMAGE_FAIL,
-    });
-  }
-};
-
-export const updateItem = (updatedItem, itemId) => async (
+export const updateItem = (updatedItem, itemId, newFile) => async (
   dispatch,
   getState
 ) => {
+  const hasNewImage = newFile ? true : false;
   try {
-    const body = JSON.stringify(updatedItem);
-    const res = await axios.put(
-      `api/items/${itemId}`,
-      body,
-      tokenConfiguration(getState)
-    );
+    let res;
+    //If new item image is attached, upload the new image to Cloudinary and notify the server to destroy old image
+    if (hasNewImage) {
+      const imgResponse = await axios.post(
+        process.env.REACT_APP_CLOUDINARY_UPLOAD,
+        newFile
+      );
+      //Attach updated image id and URL for update
+      updatedItem.imageURL = imgResponse.data.secure_url;
+      updatedItem.imageID = imgResponse.data.public_id;
+      const body = JSON.stringify({ updatedItem, hasNewImage: true });
+      res = await axios.put(
+        `api/items/${itemId}`,
+        body,
+        tokenConfiguration(getState)
+      );
+    } else {
+      //If no new image is attached, simply update the item information only
+      const body = JSON.stringify({ updatedItem, hasNewImage: false });
+      res = await axios.put(
+        `api/items/${itemId}`,
+        body,
+        tokenConfiguration(getState)
+      );
+    }
+    //Collect response and dispatch action
     dispatch({
       type: types.UPDATE_ITEM,
       updatedItem: res.data,
