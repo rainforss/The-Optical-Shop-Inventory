@@ -56,12 +56,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         actionSuccess: null,
-        imgActionSuccess: null,
       };
     case types.ITEMS_LOADING:
       return {
         ...state,
         loading: true,
+        items: [],
       };
     default:
       return state;

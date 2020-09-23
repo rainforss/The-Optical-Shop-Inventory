@@ -1,18 +1,18 @@
 import React from "react";
 import { Input, Button, Container } from "reactstrap";
 
-const SearchBar = ({ onSearch, value, onChange }) => {
+const SearchBar = ({ onSearch, value, onChange, onKeyPress }) => {
   return (
     <Container
-      className="d-flex justify-content-end mb-5"
+      className="d-flex justify-content-end align-items-center mt-5 mb-5"
       style={{ display: "inline" }}
     >
       <Input
         type="search"
         name="search"
         id="search"
-        value={value}
         onChange={onChange}
+        onKeyPress={onKeyPress}
         placeholder="Search..."
         className="mr-4"
         style={{ display: "inline", width: "60%" }}

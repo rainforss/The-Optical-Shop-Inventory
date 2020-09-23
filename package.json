@@ -8,7 +8,8 @@
     "start": "cross-env NODE_ENV=production node server",
     "server": "cross-env NODE_ENV=development nodemon server",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "author": "Jake Chen",
   "license": "ISC",

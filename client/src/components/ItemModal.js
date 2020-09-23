@@ -30,10 +30,12 @@ const ItemModal = ({
   const [serverError, setServerError] = useState({});
   const [inputModified, setInputModified] = useState({});
   const toggle = () => {
+    if (modalOpen) {
+      clearErrors();
+      resetFormInputs();
+      setInputModified({});
+    }
     setModalOpen(!modalOpen);
-    clearErrors();
-    resetFormInputs();
-    setInputModified({});
   };
   const onChange = (e) => {
     setItemInfo({ ...itemInfo, [e.target.name]: e.target.value });
@@ -135,13 +137,15 @@ const ItemModal = ({
     });
     const errorFree = validateForm();
     if (!errorFree) return;
-    const file = new FormData();
-    console.log(itemImage);
-    file.append("file", itemImage);
+    let file;
+    if (itemImage) {
+      file = new FormData();
+      file.append("file", itemImage);
 
-    file.append("upload_preset", "opticalshop");
-    file.append("public_id", `${itemInfo.name}AND${itemInfo.barcode}`);
-    file.append("cloud_name", "rainforss");
+      file.append("upload_preset", "opticalshop");
+      file.append("public_id", `${itemInfo.name}AND${itemInfo.barcode}`);
+      file.append("cloud_name", "rainforss");
+    }
 
     const newItem = {
       name: itemInfo.name,
@@ -180,9 +184,7 @@ const ItemModal = ({
           Add Item
         </Button>
       ) : (
-        <Alert color="primary" style={{ marginBottom: "5rem" }}>
-          Please log in to manage inventory
-        </Alert>
+        <Alert color="primary">Please log in to manage inventory</Alert>
       )}
 
       <Modal isOpen={modalOpen} toggle={toggle}>

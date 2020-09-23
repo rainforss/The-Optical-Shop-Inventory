@@ -29,7 +29,13 @@ const AppNavbar = ({ auth }) => {
           <Collapse isOpen={isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <NavLink href="https://github.com/rainforss">GitHub</NavLink>
+                <NavLink
+                  href="https://github.com/rainforss"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub
+                </NavLink>
               </NavItem>
               {isAuthenticated ? (
                 <>

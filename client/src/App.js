@@ -9,7 +9,8 @@ import ItemModal from "./components/ItemModal";
 import { Container } from "reactstrap";
 import { loadUser } from "./actions/authActions";
 
-//Need to optimize performance using Memo and UseCallBacks, awaits for implementation
+//Evaluated and no further optimization is worth implementing, deploy first production builld, need to implement 1. resend activation link, 2. Style the activation email.
+//3. Redirect to login page upon activation link is successful. 4. Notification bar using Toastify when actions (registration, login, item added, deleted, updated) are completed
 function App() {
   useEffect(() => {
     store.dispatch(loadUser());

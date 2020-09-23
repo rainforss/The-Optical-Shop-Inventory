@@ -42,7 +42,7 @@ router.post("/search", async (req, res) => {
         { name: { $regex: searchPattern } },
         { barcode: { $regex: searchPattern } },
       ],
-    });
+    }).sort({ barcode: 1 });
     res.json(items);
   } catch (err) {
     res.status(500).json({

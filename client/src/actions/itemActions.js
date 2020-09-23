@@ -65,7 +65,7 @@ export const deleteItem = (itemId, imgId) => async (dispatch, getState) => {
 
 export const addItem = (newItem, newFile) => async (dispatch, getState) => {
   try {
-    if (newFile.file) {
+    if (newFile) {
       const imgResponse = await axios.post(
         process.env.REACT_APP_CLOUDINARY_UPLOAD,
         newFile
