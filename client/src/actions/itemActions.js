@@ -67,7 +67,7 @@ export const addItem = (newItem, newFile) => async (dispatch, getState) => {
   try {
     if (newFile) {
       const imgResponse = await axios.post(
-        process.env.REACT_APP_CLOUDINARY_UPLOAD,
+        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
         newFile
       );
       newItem.imageURL = imgResponse.data.secure_url;
@@ -104,7 +104,7 @@ export const updateItem = (updatedItem, itemId, newFile) => async (
     //If new item image is attached, upload the new image to Cloudinary and notify the server to destroy old image
     if (hasNewImage) {
       const imgResponse = await axios.post(
-        process.env.REACT_APP_CLOUDINARY_UPLOAD,
+        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
         newFile
       );
       //Attach updated image id and URL for update
