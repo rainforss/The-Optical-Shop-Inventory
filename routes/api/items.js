@@ -136,17 +136,15 @@ router.put("/:id", verify, async (req, res) => {
     toBeUpdated.itemType = updatedItem.itemType;
     toBeUpdated.lastModifiedBy = req.user;
     //Update the image id and URL if new image updated
-    if (updatedItem.imageID && updatedItem.imageURL) {
-      toBeUpdated.imageID = updatedItem.imageID;
-      toBeUpdated.imageURL = updatedItem.imageURL;
-    }
-
-    //If image is being replaced, destroy the current non-default image on Cloudinary
-    if (hasNewImage) {
-      //Destroy if the current image is not the default file
-      if (toBeUpdated.imageID) {
+    if (hasNewImage && updatedItem.imageID && updatedItem.imageURL) {
+      //Destroy if the current image is not the default file, if imageID remains the same Cloudinary will invalidate the old version so no action required
+      if (toBeUpdated.imageID !== updatedItem.imageID) {
         cloudinary.uploader.destroy(toBeUpdated.imageID, { invalidate: true });
       }
+
+      //After disposal of old image information, set updated information
+      toBeUpdated.imageID = updatedItem.imageID;
+      toBeUpdated.imageURL = updatedItem.imageURL;
     }
 
     //Send new information back to the app for re-rendering
