@@ -145,7 +145,7 @@ router.put("/:id", verify, async (req, res) => {
     if (hasNewImage) {
       //Destroy if the current image is not the default file
       if (toBeUpdated.imageID) {
-        cloudinary.uploader.destroy(toBeUpdated.imageID);
+        cloudinary.uploader.destroy(toBeUpdated.imageID, { invalidate: true });
       }
     }
 
