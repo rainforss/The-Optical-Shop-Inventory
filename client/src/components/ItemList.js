@@ -87,9 +87,7 @@ const ItemList = ({
     if (itemImage) {
       file = new FormData();
       file.append("file", itemImage);
-      file.append("upload_preset", "opticalshop");
       file.append("public_id", `${currentItem.name}AND${currentItem.barcode}`);
-      file.append("cloud_name", "rainforss");
     }
     const updatedItem = {
       name: currentItem.name,

@@ -103,10 +103,23 @@ export const updateItem = (updatedItem, itemId, newFile) => async (
     let res;
     //If new item image is attached, upload the new image to Cloudinary and notify the server to destroy old image
     if (hasNewImage) {
+      //Get Cloudinary authentication string from the server and post image to Cloudinary
+      const info = JSON.stringify({
+        public_id: `${updatedItem.name}AND${updatedItem.barcode}`,
+      });
+      const authenticate = await axios.post(
+        "api/user/getsignature",
+        info,
+        tokenConfiguration(getState)
+      );
+      newFile.append("api_key", "334344196228832");
+      newFile.append("timestamp", authenticate.data.timestamp);
+      newFile.append("signature", authenticate.data.signature);
       const imgResponse = await axios.post(
         "https://api.cloudinary.com/v1_1/rainforss/image/upload",
         newFile
       );
+      console.log(imgResponse);
       //Attach updated image id and URL for update
       updatedItem.imageURL = imgResponse.data.secure_url;
       updatedItem.imageID = imgResponse.data.public_id;

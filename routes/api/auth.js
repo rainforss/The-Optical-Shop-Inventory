@@ -116,6 +116,23 @@ router.get("/userinfo", verify, async (req, res) => {
   }
 });
 
+//Get Cloudinary signature and timestamp
+router.post("/getsignature", verify, (req, res) => {
+  try {
+    const { public_id } = req.body;
+    const timestamp = Math.floor(+new Date() / 1000);
+    const signatureString = `public_id=${public_id}&timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`;
+    const signature = crypto
+      .createHash("sha1")
+      .update(signatureString)
+      .digest("hex");
+    const authentication = { timestamp, signature };
+    res.json(authentication);
+  } catch (err) {
+    res.json({ msg: err.message });
+  }
+});
+
 //Activation link implementation
 router.get("/activate/:activationToken", (req, res, next) => {
   //Find the user who possesses the activation token which is within expiration date
