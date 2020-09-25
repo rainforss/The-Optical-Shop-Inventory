@@ -24,10 +24,5 @@ module.exports = (mail, res) => {
     ...mail,
   };
 
-  transporter.sendMail(mailOptions, (error) => {
-    if (error)
-      return res.json({
-        msg: "Activation link was not sent successfully, please try again",
-      });
-  });
+  transporter.sendMail(mailOptions);
 };
