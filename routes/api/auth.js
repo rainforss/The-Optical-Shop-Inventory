@@ -10,16 +10,18 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config/config.env" });
 
+//Nodemailer OAuth2 configuration
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
   secure: true,
   auth: {
-    type: "OAUTH2",
+    type: "OAuth2",
     user: process.env.HOST_EMAIL_USER,
     clientId: process.env.MAIL_CLIENT_ID,
     refreshToken: process.env.MAIL_REFRESH_TOKEN,
     accessToken: process.env.MAIL_ACCESS_TOKEN,
+    clientSecret: process.env.MAIL_CLIENT_SECRET,
     expires: 3599,
   },
 });
@@ -63,7 +65,7 @@ router.post("/register", async (req, res) => {
     )}`;
 
     const mailOptions = {
-      from: `The Optical Shop IMS ${process.env.HOST_EMAIL_USER}`,
+      from: `The Optical Shop IMS`,
       to: req.body.email,
       subject: "Welcome to IMS",
       text: "Please finish the activation process so you can log in",
