@@ -45,7 +45,7 @@ router.post("/register", async (req, res) => {
     });
 
     //Generate activation link to send
-    const activationLink = `http://localhost:5000/api/user/activate/${encodeURIComponent(
+    const activationLink = `https://damp-badlands-84181.herokuapp.com/api/user/activate/${encodeURIComponent(
       user.activationToken
     )}`;
 
