@@ -174,4 +174,6 @@ router.get("/activate/:activationToken", async (req, res) => {
   }
 });
 
+//NEED TO IMPLEMENT ROUTE FOR RESETTING PASSWORD
+
 module.exports = router;
