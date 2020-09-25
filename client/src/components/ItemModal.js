@@ -6,6 +6,7 @@ import { clearErrors } from "../actions/errorActions";
 import TextInput from "./common/TextInput";
 import SelectInput from "./common/SelectInput";
 import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 
 const ItemModal = ({
   addItem,
@@ -171,6 +172,7 @@ const ItemModal = ({
     }
     if (modalOpen) {
       if (item.actionSuccess) {
+        toast.success("New item has been successfully added!");
         resetStatus();
         toggle();
       }

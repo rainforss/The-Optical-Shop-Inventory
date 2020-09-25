@@ -22,6 +22,7 @@ import PropTypes from "prop-types";
 import ModifyModal from "./common/ModifyModal";
 import validate from "./common/validation";
 import SearchBar from "./common/SearchBar";
+import { toast } from "react-toastify";
 
 const ItemList = ({
   getItems,
@@ -126,6 +127,8 @@ const ItemList = ({
     }
     if (modalOpen) {
       if (item.actionSuccess) {
+        toast.success("Changes have been saved succesfully.");
+        console.log("aped");
         resetStatus();
         toggle();
       }

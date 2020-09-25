@@ -13,6 +13,7 @@ import { register, resetRegisterStatus } from "../actions/authActions";
 import { clearErrors } from "../actions/errorActions";
 import TextInput from "./common/TextInput";
 import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 
 const RegisterModal = ({
   register,
@@ -153,10 +154,11 @@ const RegisterModal = ({
     if (modalOpen && auth.registerSuccess) {
       resetRegisterStatus();
       toggle();
+      toast.success(
+        "Registration success. An activation link has been sent to your email box."
+      );
     }
   }, [error, auth.registerSuccess]);
-
-  //Client side validation finished, need server side error response implementation
 
   return (
     <>

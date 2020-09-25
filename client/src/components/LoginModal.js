@@ -13,6 +13,7 @@ import { login } from "../actions/authActions";
 import { clearErrors } from "../actions/errorActions";
 import TextInput from "./common/TextInput";
 import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 
 const LoginModal = ({ login, clearErrors, error, auth }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -35,6 +36,7 @@ const LoginModal = ({ login, clearErrors, error, auth }) => {
       password: "",
     });
   };
+
   const onSubmit = (e) => {
     e.preventDefault();
     const { email, password } = inputFields;
@@ -53,11 +55,17 @@ const LoginModal = ({ login, clearErrors, error, auth }) => {
       setServerError({ msg: null });
     }
 
-    if (modalOpen && auth.isAuthenticated) {
-      toggle();
+    if (modalOpen) {
+      if (auth.isAuthenticated) {
+        toast.success(
+          `Welcome back ${auth.user.name}, you can now manage inventory now`
+        );
+        toggle();
+      }
     }
-  }, [error]);
+  }, [error, auth.isAuthenticated, modalOpen]);
 
+  console.log(modalOpen);
   return (
     <>
       <NavLink onClick={toggle} href="#">
