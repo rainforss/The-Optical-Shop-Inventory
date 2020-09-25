@@ -20,8 +20,8 @@ module.exports = (mail, res) => {
 
   transporter.sendMail(mailOptions, (error) => {
     if (error)
-      return res.send(
-        "Activation link was not sent successfully, please try again"
-      );
+      return res.json({
+        msg: "Activation link was not sent successfully, please try again",
+      });
   });
 };
