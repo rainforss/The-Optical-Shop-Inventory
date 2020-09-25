@@ -65,7 +65,6 @@ const LoginModal = ({ login, clearErrors, error, auth }) => {
     }
   }, [error, auth.isAuthenticated, modalOpen]);
 
-  console.log(modalOpen);
   return (
     <>
       <NavLink onClick={toggle} href="#">
