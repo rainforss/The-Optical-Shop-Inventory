@@ -74,11 +74,17 @@ router.post("/login", async (req, res) => {
 
   try {
     //Check if email exists
-    const user = await User.findOne({ email: req.body.email, active: true });
+    const user = await User.findOne({ email: req.body.email });
     if (!user)
       return res
         .status(400)
-        .json({ msg: "Email does not match an active user" });
+        .json({ msg: "Email does not match an existing user" });
+
+    if (!user.active)
+      return res.status(400).json({
+        msg:
+          "Your account has not been activated, please activate using emailed link first",
+      });
 
     //Check if password is correct
     const validPassword = await bcrypt.compare(
@@ -90,9 +96,9 @@ router.post("/login", async (req, res) => {
         .status(400)
         .json({ msg: "Password does not match an active user" });
 
-    //Create and assign a JSON token with expiration time of 1 hour
+    //Create and assign a JSON token with expiration time of 2 hours
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
-      expiresIn: 3600,
+      expiresIn: 7200,
     });
     res.status(200).json({
       token,
@@ -133,32 +139,39 @@ router.post("/getsignature", verify, (req, res) => {
   }
 });
 
+//NEED TO IMPLEMENT A SPECIFIC ROUTE FOR SENDING ACTIVATION EMAIL IN THE FUTURE
 //Activation link implementation
-router.get("/activate/:activationToken", (req, res, next) => {
+router.get("/activate/:activationToken", async (req, res) => {
   //Find the user who possesses the activation token which is within expiration date
-  User.findOne(
-    {
+  try {
+    const user = await User.findOne({
       activationToken: decodeURIComponent(req.params.activationToken),
-      tokenExpires: { $gt: Date.now() },
-    },
-    (err, user) => {
-      if (err) return next(err);
-      if (!user) {
-        return res.status(400).json({
-          msg:
-            "Activation failed. Either you have not registered or the activation link is already expired. Please register again.",
-        });
-      }
-
-      user.active = true;
-      user.save((err, user) => {
-        if (err) return next(err);
-        res.status(200).json({
-          msg: "Congratulations! Your account has now been activated.",
-        });
+      //tokenExpires: { $gt: Date.now() },
+      //active:false,
+    });
+    if (user.active) {
+      return res.status(400).json({
+        msg: "Activation error. You have already activated your account",
       });
     }
-  );
+    if (user.tokenExpires < Date.now()) {
+      User.findOneAndDelete({
+        activationToken: decodeURIComponent(req.params.activationToken),
+      });
+      return res.status(400).json({
+        msg:
+          "Activation failed. Your activation code is expired, please register again",
+      });
+    }
+
+    user.active = true;
+    const activatedUser = await user.save();
+    res.status(200).json({
+      msg: `Congratulations! Your account ${activatedUser.email} has now been activated`,
+    });
+  } catch (err) {
+    res.json({ msg: err.message });
+  }
 });
 
 module.exports = router;

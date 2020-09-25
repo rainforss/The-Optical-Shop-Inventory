@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema(
     },
     activationToken: {
       type: String,
+      unique: true,
     },
     tokenExpires: {
       type: Date,
