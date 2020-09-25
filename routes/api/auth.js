@@ -10,6 +10,20 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config/config.env" });
 
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    type: "OAUTH2",
+    user: process.env.HOST_EMAIL_USER,
+    clientId: process.env.MAIL_CLIENT_ID,
+    refreshToken: process.env.MAIL_REFRESH_TOKEN,
+    accessToken: process.env.MAIL_ACCESS_TOKEN,
+    expires: 3599,
+  },
+});
+
 //Register
 router.post("/register", async (req, res) => {
   //Validate data before making requests
@@ -48,14 +62,20 @@ router.post("/register", async (req, res) => {
       user.activationToken
     )}`;
 
-    //Configure email
     const mailOptions = {
+      from: `The Optical Shop IMS ${process.env.HOST_EMAIL_USER}`,
       to: req.body.email,
-      html: `Please click the following link to <a href="${activationLink}">${activationLink}</a> to activate your account.`,
+      subject: "Welcome to IMS",
+      text: "Please finish the activation process so you can log in",
+      html: `Please click <a href="${activationLink}">HERE</a> to activate your account.`,
     };
+
     try {
       //Send user the activation link and save the user credentials to database
-      mailer(mailOptions, res);
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) console.log(err);
+        else console.log(info);
+      });
       const savedUser = await user.save();
       res.json({ msg: `The activation email has been sent to ${user._id}` });
     } catch (err) {
