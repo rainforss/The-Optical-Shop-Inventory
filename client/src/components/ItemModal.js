@@ -38,6 +38,7 @@ const ItemModal = ({
     frameShape: "circle",
     frameType: "fullRim",
     frameColor: "#000000",
+    colorGroup: "grey",
     hingeType: "standard",
     hasNosePads: true,
     barcode: "",
@@ -70,7 +71,11 @@ const ItemModal = ({
     setInputModified({ ...inputModified, [e.target.name]: true });
   };
   const onColorSelect = (e) => {
-    setItemInfo({ ...itemInfo, frameColor: e.currentTarget.name });
+    setItemInfo({
+      ...itemInfo,
+      frameColor: e.currentTarget.name,
+      colorGroup: e.currentTarget.dataset.group,
+    });
     setInputModified({ ...inputModified, [e.currentTarget.name]: true });
   };
 
@@ -84,6 +89,7 @@ const ItemModal = ({
       frameShape: "circle",
       frameType: "fullRim",
       frameColor: "#000000",
+      colorGroup: "grey",
       hingeType: "standard",
       hasNosePads: true,
       barcode: "",
@@ -242,6 +248,7 @@ const ItemModal = ({
       hingeType: itemInfo.hingeType,
       hasNosePads: itemInfo.hasNosePads,
       frameColor: itemInfo.frameColor,
+      colorGroup: itemInfo.colorGroup,
     };
     addItem(newItem, file);
   };
@@ -265,7 +272,6 @@ const ItemModal = ({
     }
   }, [error, item.actionSuccess, modalOpen]);
 
-  console.log(itemInfo.material);
   return (
     <>
       {isAuthenticated ? (

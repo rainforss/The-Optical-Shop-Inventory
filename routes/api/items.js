@@ -76,6 +76,7 @@ router.post("/", verify, async (req, res) => {
     frameShape: req.body.frameShape,
     frameType: req.body.frameType,
     frameColor: req.body.frameColor,
+    colorGroup: req.body.colorGroup,
     hingeType: req.body.hingeType,
     hasNosePads: req.body.hasNosePads,
     barcode: req.body.barcode,
@@ -144,6 +145,7 @@ router.put("/:id", verify, async (req, res) => {
     toBeUpdated.frameShape = updatedItem.frameShape;
     toBeUpdated.frameType = updatedItem.frameType;
     toBeUpdated.frameColor = updatedItem.frameColor;
+    toBeUpdated.colorGroup = updatedItem.colorGroup;
     toBeUpdated.hingeType = updatedItem.hingeType;
     toBeUpdated.hasNosePads = updatedItem.hasNosePads;
     toBeUpdated.barcode = updatedItem.barcode;

@@ -27,6 +27,7 @@ module.exports = {
       frameShape: joi.string().alphanum().required(),
       frameType: joi.string().alphanum().required(),
       frameColor: joi.string().min(7).required(),
+      colorGroup: joi.string().alphanum().required(),
       hingeType: joi.string().alphanum().required(),
       hasNosePads: joi.bool().required(),
       barcode: joi.string().required().min(6),

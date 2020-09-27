@@ -17,6 +17,10 @@ const ItemSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    colorGroup: {
+      type: String,
+      required: true,
+    },
     eyeSize: {
       type: String,
       required: true,

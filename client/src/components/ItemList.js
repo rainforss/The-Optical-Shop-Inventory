@@ -51,7 +51,11 @@ const ItemList = ({
   };
 
   const onColorSelect = (e) => {
-    setCurrentItem({ ...currentItem, frameColor: e.currentTarget.name });
+    setCurrentItem({
+      ...currentItem,
+      frameColor: e.currentTarget.name,
+      colorGroup: e.currentTarget.dataset.group,
+    });
     setInputModified({ ...inputModified, [e.currentTarget.name]: true });
   };
 
@@ -119,6 +123,7 @@ const ItemList = ({
       frameShape: currentItem.frameShape,
       frameType: currentItem.frameType,
       frameColor: currentItem.frameColor,
+      colorGroup: currentItem.colorGroup,
       hingeType: currentItem.hingeType,
       hasNosePads: currentItem.hasNosePads,
     };
@@ -148,7 +153,6 @@ const ItemList = ({
     if (modalOpen) {
       if (item.actionSuccess) {
         toast.success("Changes have been saved succesfully.");
-        console.log("aped");
         resetStatus();
         toggle();
       }

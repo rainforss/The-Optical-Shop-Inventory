@@ -83,6 +83,7 @@ const ColorSelector = ({
                 key={color.name}
                 name={color.hex}
                 onClick={onClick}
+                data-group={color.group}
               >
                 {color.name}
               </DropdownItem>
