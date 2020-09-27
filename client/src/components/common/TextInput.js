@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  FormGroup,
-  Label,
-  Input,
-  Alert,
-  FormText,
-  FormFeedback,
-} from "reactstrap";
+import { FormGroup, Label, Input, FormText, FormFeedback } from "reactstrap";
 
 const TextInput = ({
   label,

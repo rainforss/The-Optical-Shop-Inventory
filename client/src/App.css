@@ -20,6 +20,11 @@
   width: 30%;
 }
 
+.color-drop-down {
+  height: 370px;
+  overflow-y: scroll;
+}
+
 @media screen and (max-width: 1200px) {
   .item-card {
     width: 45%;
@@ -27,6 +32,9 @@
 }
 
 @media screen and (max-width: 600px) {
+  html {
+    font-size: 0.8rem;
+  }
   .item-card {
     width: 90%;
   }

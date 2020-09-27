@@ -69,6 +69,15 @@ router.post("/", verify, async (req, res) => {
   //const currentUser = await User.findOne({ _id: req.user });
   const newItem = new Item({
     name: req.body.name,
+    eyeSize: req.body.eyeSize,
+    bridgeWidth: req.body.bridgeWidth,
+    templeLength: req.body.templeLength,
+    material: req.body.material,
+    frameShape: req.body.frameShape,
+    frameType: req.body.frameType,
+    frameColor: req.body.frameColor,
+    hingeType: req.body.hingeType,
+    hasNosePads: req.body.hasNosePads,
     barcode: req.body.barcode,
     row: req.body.row,
     column: req.body.column,
@@ -128,6 +137,15 @@ router.put("/:id", verify, async (req, res) => {
     //Then find the original item and construct the new item object
     const toBeUpdated = await Item.findById(req.params.id);
     toBeUpdated.name = updatedItem.name;
+    toBeUpdated.eyeSize = updatedItem.eyeSize;
+    toBeUpdated.bridgeWidth = updatedItem.bridgeWidth;
+    toBeUpdated.templeLength = updatedItem.templeLength;
+    toBeUpdated.material = updatedItem.material;
+    toBeUpdated.frameShape = updatedItem.frameShape;
+    toBeUpdated.frameType = updatedItem.frameType;
+    toBeUpdated.frameColor = updatedItem.frameColor;
+    toBeUpdated.hingeType = updatedItem.hingeType;
+    toBeUpdated.hasNosePads = updatedItem.hasNosePads;
     toBeUpdated.barcode = updatedItem.barcode;
     toBeUpdated.price = updatedItem.price;
     toBeUpdated.row = updatedItem.row;

@@ -1,4 +1,5 @@
 const joi = require("joi");
+const { min } = require("lodash");
 
 module.exports = {
   registerValidation: (data) => {
@@ -19,6 +20,15 @@ module.exports = {
   itemValidation: (data) => {
     const schema = joi.object({
       name: joi.string().min(6).required(),
+      eyeSize: joi.string().alphanum().min(2).required(),
+      bridgeWidth: joi.string().alphanum().min(1).required(),
+      templeLength: joi.string().alphanum().min(3).required(),
+      material: joi.string().alphanum().required(),
+      frameShape: joi.string().alphanum().required(),
+      frameType: joi.string().alphanum().required(),
+      frameColor: joi.string().min(7).required(),
+      hingeType: joi.string().alphanum().required(),
+      hasNosePads: joi.bool().required(),
       barcode: joi.string().required().min(6),
       row: joi.number().integer().positive().max(100).required(),
       column: joi.number().integer().positive().max(100).required(),

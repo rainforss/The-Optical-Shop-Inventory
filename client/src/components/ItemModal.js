@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Button, Modal, ModalHeader, ModalBody, Form, Alert } from "reactstrap";
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Form,
+  Alert,
+  Row,
+  Col,
+} from "reactstrap";
+
 import { connect } from "react-redux";
 import { addItem, resetStatus } from "../actions/itemActions";
 import { clearErrors } from "../actions/errorActions";
 import TextInput from "./common/TextInput";
+import RadioInput from "./common/RadioInput";
 import SelectInput from "./common/SelectInput";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import ColorSelector from "./common/ColorSelector";
 
 const ItemModal = ({
   addItem,
@@ -19,6 +31,15 @@ const ItemModal = ({
   const [modalOpen, setModalOpen] = useState(false);
   const [itemInfo, setItemInfo] = useState({
     name: "",
+    eyeSize: "",
+    bridgeWidth: "",
+    templeLength: "",
+    material: "metal",
+    frameShape: "circle",
+    frameType: "fullRim",
+    frameColor: "#000000",
+    hingeType: "standard",
+    hasNosePads: true,
     barcode: "",
     row: "",
     column: "",
@@ -30,6 +51,12 @@ const ItemModal = ({
   const [inputErrors, setInputErrors] = useState({});
   const [serverError, setServerError] = useState({});
   const [inputModified, setInputModified] = useState({});
+  const [colorDropDownOpen, setColorDropDownOpen] = useState(false);
+  const [colorSearchValue, setColorSearchValue] = useState("");
+
+  const toggleColorDropDown = () => {
+    setColorDropDownOpen(!colorDropDownOpen);
+  };
   const toggle = () => {
     if (modalOpen) {
       clearErrors();
@@ -42,9 +69,23 @@ const ItemModal = ({
     setItemInfo({ ...itemInfo, [e.target.name]: e.target.value });
     setInputModified({ ...inputModified, [e.target.name]: true });
   };
+  const onColorSelect = (e) => {
+    setItemInfo({ ...itemInfo, frameColor: e.currentTarget.name });
+    setInputModified({ ...inputModified, [e.currentTarget.name]: true });
+  };
+
   const resetFormInputs = () => {
     setItemInfo({
       name: "",
+      eyeSize: "",
+      bridgeWidth: "",
+      templeLength: "",
+      material: "metal",
+      frameShape: "circle",
+      frameType: "fullRim",
+      frameColor: "#000000",
+      hingeType: "standard",
+      hasNosePads: true,
       barcode: "",
       row: "",
       column: "",
@@ -62,6 +103,21 @@ const ItemModal = ({
         "Please enter brand name and model number, at least 6 characters";
     } else {
       errors.name = "";
+    }
+    if (inputModified.eyeSize && itemInfo.eyeSize.trim().length < 2) {
+      errors.eyeSize = "Eye size contains at least 2 digits";
+    } else {
+      errors.eyeSize = "";
+    }
+    if (inputModified.bridgeWidth && itemInfo.bridgeWidth.trim().length < 2) {
+      errors.bridgeWidth = "Bridge width contains at least 2 digits";
+    } else {
+      errors.bridgeWidth = "";
+    }
+    if (inputModified.templeLength && itemInfo.templeLength.trim().length < 3) {
+      errors.templeLength = "Temple length contains at least 3 digits";
+    } else {
+      errors.templeLength = "";
     }
     if (inputModified.barcode && itemInfo.barcode.trim().length < 6) {
       errors.barcode = "Barcode contains at least 6 digits";
@@ -96,6 +152,24 @@ const ItemModal = ({
       errorNumber++;
     } else {
       errors.name = "";
+    }
+    if (itemInfo.eyeSize.trim().length < 6) {
+      errors.eyeSize = "Eye size contains at least 2 digits";
+      errorNumber++;
+    } else {
+      errors.eyeSize = "";
+    }
+    if (itemInfo.bridgeWidth.trim().length < 6) {
+      errors.bridgeWidth = "Bridge width contains at least 2 digits";
+      errorNumber++;
+    } else {
+      errors.bridgeWidth = "";
+    }
+    if (itemInfo.templeLength.trim().length < 6) {
+      errors.templeLength = "Temple length contains at least 3 digits";
+      errorNumber++;
+    } else {
+      errors.templeLength = "";
     }
     if (itemInfo.barcode.trim().length < 6) {
       errors.barcode = "Barcode contains at least 6 digits";
@@ -156,6 +230,15 @@ const ItemModal = ({
       price: itemInfo.price,
       inStock: itemInfo.inStock === "YES" ? true : false,
       itemType: itemInfo.itemType,
+      eyeSize: itemInfo.eyeSize,
+      bridgeWidth: itemInfo.bridgeWidth,
+      templeLength: itemInfo.templeLength,
+      material: itemInfo.material,
+      frameShape: itemInfo.frameShape,
+      frameType: itemInfo.frameType,
+      hingeType: itemInfo.hingeType,
+      hasNosePads: itemInfo.hasNosePads,
+      frameColor: itemInfo.frameColor,
     };
     addItem(newItem, file);
   };
@@ -179,6 +262,7 @@ const ItemModal = ({
     }
   }, [error, item.actionSuccess, modalOpen]);
 
+  console.log(itemInfo.material);
   return (
     <>
       {isAuthenticated ? (
@@ -206,6 +290,118 @@ const ItemModal = ({
               error={inputErrors.name}
               type="text"
             />
+            <Row form>
+              <Col xs={4}>
+                <TextInput
+                  label="Eye size"
+                  name="eyeSize"
+                  id="eyeSize"
+                  value={itemInfo.eyeSize}
+                  placeHolder="x x"
+                  onChange={onChange}
+                  error={inputErrors.eyeSize}
+                  type="text"
+                />
+              </Col>
+              <Col xs={4}>
+                <TextInput
+                  label="Bridge width"
+                  name="bridgeWidth"
+                  id="bridgeWidth"
+                  value={itemInfo.bridgeWidth}
+                  placeHolder="x x"
+                  onChange={onChange}
+                  error={inputErrors.bridgeWidth}
+                  type="text"
+                />
+              </Col>
+              <Col xs={4}>
+                <TextInput
+                  label="Temple length"
+                  name="templeLength"
+                  id="templeLength"
+                  value={itemInfo.templeLength}
+                  placeHolder="x x x"
+                  onChange={onChange}
+                  error={inputErrors.templeLength}
+                  type="text"
+                />
+              </Col>
+            </Row>
+            <RadioInput
+              name="material"
+              legend="Material"
+              onChange={onChange}
+              selected={itemInfo.material}
+              options={[
+                { text: "Metal", value: "metal" },
+                { text: "Acetate", value: "acetate" },
+                { text: "Composite", value: "composite" },
+              ]}
+            />
+            <RadioInput
+              name="frameShape"
+              legend="Frame Shape"
+              onChange={onChange}
+              selected={itemInfo.frameShape}
+              options={[
+                { text: "Circle", value: "circle" },
+                { text: "R-edge", value: "roundEdges" },
+                { text: "Rect", value: "rectangular" },
+                { text: "Irregular", value: "irregular" },
+              ]}
+            />
+            <RadioInput
+              name="frameType"
+              legend="Frame Type"
+              onChange={onChange}
+              selected={itemInfo.frameType}
+              options={[
+                { text: "Full-rim", value: "fullRim" },
+                { text: "Semi-rimless", value: "semiRimless" },
+                { text: "Full-rimless", value: "fullRimless" },
+              ]}
+            />
+            <ColorSelector
+              id="frameColor"
+              name="frameColor"
+              label="Frame Color"
+              colorValue={itemInfo.frameColor}
+              type="text"
+              dropdownOpen={colorDropDownOpen}
+              toggleDropDown={toggleColorDropDown}
+              colorSearchValue={colorSearchValue}
+              onChange={(e) => setColorSearchValue(e.target.value)}
+              onClick={onColorSelect}
+              warning={
+                itemInfo.frameColor === "#000000" && !inputModified.frameColor
+                  ? "If no color is selected, system will use default color black"
+                  : null
+              }
+            />
+            <RadioInput
+              name="hingeType"
+              legend="Hinge Type"
+              onChange={onChange}
+              selected={itemInfo.hingeType}
+              options={[
+                { text: "Standard", value: "standard" },
+                { text: "Spring", value: "spring" },
+                { text: "Flex", value: "flex" },
+                { text: "Hingeless", value: "hingeless" },
+              ]}
+            />
+            <RadioInput
+              name="hasNosePads"
+              legend="Nose pads"
+              onChange={onChange}
+              selected={itemInfo.hasNosePads}
+              options={[
+                { text: "YES", value: true },
+                { text: "NO", value: false },
+              ]}
+            />
+
             <TextInput
               label="Item Barcode"
               name="barcode"

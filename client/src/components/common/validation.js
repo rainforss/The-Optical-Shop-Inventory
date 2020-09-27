@@ -8,6 +8,24 @@ export default function validate(itemInfo, setErrors) {
       } else {
         errors.name = "";
       }
+      if (inputModified.eyeSize && itemInfo.eyeSize.trim().length < 2) {
+        errors.eyeSize = "Eye size contains at least 2 digits";
+      } else {
+        errors.eyeSize = "";
+      }
+      if (inputModified.bridgeWidth && itemInfo.bridgeWidth.trim().length < 2) {
+        errors.bridgeWidth = "Bridge width contains at least 2 digits";
+      } else {
+        errors.bridgeWidth = "";
+      }
+      if (
+        inputModified.templeLength &&
+        itemInfo.templeLength.trim().length < 3
+      ) {
+        errors.templeLength = "Temple length contains at least 3 digits";
+      } else {
+        errors.templeLength = "";
+      }
       if (inputModified.barcode && itemInfo.barcode.trim().length < 6) {
         errors.barcode = "Barcode contains at least 6 digits";
       } else {
@@ -40,6 +58,24 @@ export default function validate(itemInfo, setErrors) {
         errorNumber++;
       } else {
         errors.name = "";
+      }
+      if (itemInfo.eyeSize.trim().length < 6) {
+        errors.eyeSize = "Eye size contains at least 2 digits";
+        errorNumber++;
+      } else {
+        errors.eyeSize = "";
+      }
+      if (itemInfo.bridgeWidth.trim().length < 6) {
+        errors.bridgeWidth = "Bridge width contains at least 2 digits";
+        errorNumber++;
+      } else {
+        errors.bridgeWidth = "";
+      }
+      if (itemInfo.templeLength.trim().length < 6) {
+        errors.templeLength = "Temple length contains at least 3 digits";
+        errorNumber++;
+      } else {
+        errors.templeLength = "";
       }
       if (itemInfo.barcode.trim().length < 6) {
         errors.barcode = "Barcode contains at least 6 digits";

@@ -101,6 +101,15 @@ const ItemList = ({
           ? true
           : false,
       itemType: currentItem.itemType,
+      eyeSize: currentItem.eyeSize,
+      bridgeWidth: currentItem.bridgeWidth,
+      templeLength: currentItem.templeLength,
+      material: currentItem.material,
+      frameShape: currentItem.frameShape,
+      frameType: currentItem.frameType,
+      frameColor: currentItem.frameColor,
+      hingeType: currentItem.hingeType,
+      hasNosePads: currentItem.hasNosePads,
     };
 
     updateItem(updatedItem, currentItem._id, file);

@@ -13,6 +13,43 @@ const ItemSchema = new mongoose.Schema(
       unique: true,
       min: 4,
     },
+    frameColor: {
+      type: String,
+      required: true,
+    },
+    eyeSize: {
+      type: String,
+      required: true,
+    },
+    bridgeWidth: {
+      type: String,
+      default: "",
+    },
+    templeLength: {
+      type: String,
+      default: "",
+    },
+    material: {
+      type: String,
+      required: true,
+    },
+    frameShape: {
+      type: String,
+      required: true,
+    },
+    frameType: {
+      type: String,
+      required: true,
+    },
+    hingeType: {
+      type: String,
+      required: true,
+    },
+    hasNosePads: {
+      type: Boolean,
+      required: true,
+    },
+
     row: {
       type: String,
       required: true,
