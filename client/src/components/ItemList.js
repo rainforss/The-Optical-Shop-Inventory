@@ -43,6 +43,17 @@ const ItemList = ({
   const [itemImage, setItemImage] = useState();
   const [inputModified, setInputModified] = useState({});
   const [keyWords, setKeyWords] = useState("");
+  const [colorDropDownOpen, setColorDropDownOpen] = useState(false);
+  const [colorSearchValue, setColorSearchValue] = useState("");
+
+  const toggleColorDropDown = () => {
+    setColorDropDownOpen(!colorDropDownOpen);
+  };
+
+  const onColorSelect = (e) => {
+    setCurrentItem({ ...currentItem, frameColor: e.currentTarget.name });
+    setInputModified({ ...inputModified, [e.currentTarget.name]: true });
+  };
 
   const onDelete = (e) => {
     const id = e.target.name;
@@ -223,6 +234,11 @@ const ItemList = ({
           isAuthenticated={isAuthenticated}
           changeImage={changeImage}
           itemImage={itemImage}
+          colorDropDownOpen={colorDropDownOpen}
+          toggleColorDropDown={toggleColorDropDown}
+          colorSearchValue={colorSearchValue}
+          onColorSelect={onColorSelect}
+          changeSearchValue={(e) => setColorSearchValue(e.target.value)}
         />
       </Container>
     </>

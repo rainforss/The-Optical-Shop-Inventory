@@ -13,7 +13,7 @@ const Logout = ({ onClick }) => {
 };
 
 Logout.propTypes = {
-  logout: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default Logout;

@@ -153,19 +153,19 @@ const ItemModal = ({
     } else {
       errors.name = "";
     }
-    if (itemInfo.eyeSize.trim().length < 6) {
+    if (itemInfo.eyeSize.trim().length < 2) {
       errors.eyeSize = "Eye size contains at least 2 digits";
       errorNumber++;
     } else {
       errors.eyeSize = "";
     }
-    if (itemInfo.bridgeWidth.trim().length < 6) {
+    if (itemInfo.bridgeWidth.trim().length < 2) {
       errors.bridgeWidth = "Bridge width contains at least 2 digits";
       errorNumber++;
     } else {
       errors.bridgeWidth = "";
     }
-    if (itemInfo.templeLength.trim().length < 6) {
+    if (itemInfo.templeLength.trim().length < 3) {
       errors.templeLength = "Temple length contains at least 3 digits";
       errorNumber++;
     } else {
@@ -205,6 +205,9 @@ const ItemModal = ({
     e.preventDefault();
     setInputModified({
       name: true,
+      eyeSize: true,
+      bridgeWidth: true,
+      templeLength: true,
       barcode: true,
       row: true,
       column: true,
