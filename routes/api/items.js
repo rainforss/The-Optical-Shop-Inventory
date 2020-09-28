@@ -19,8 +19,96 @@ cloudinary.config({
 //@access Public
 
 router.get("/", async (req, res) => {
+  // const pageNumber = parseInt(req.query.pageNum);
+  // const pageSize = parseInt(req.query.pageSize);
+  // const priceMax = parseInt(req.query.priceMax);
+  // const priceMin = parseInt(req.query.priceMin);
+  // const colorGroup = req.query.colorGroup;
+  // const material = req.query.material;
+  // const eyeSizeMax = parseInt(req.query.eyeSizeMax);
+  // const eyeSizeMin = parseInt(req.query.eyeSizeMin);
+  // const templeLengthMax = parseInt(req.query.templeLengthMax);
+  // const templeLengthMin = parseInt(req.query.templeLengthMin);
+  // const frameShape = req.query.frameShape;
+  // const frameType = req.query.frameType;
+  // const hingeType = req.query.hingeType;
+  // const nosePads = req.query.nosePads;
+  // const eyewearType = req.query.eyewearType;
+
+  const {
+    keywords,
+    pageNum,
+    pageSize,
+    priceMax,
+    priceMin,
+    colorGroup,
+    material,
+    eyeSizeMax,
+    eyeSizeMin,
+    templeLengthMax,
+    templeLengthMin,
+    frameShape,
+    frameType,
+    hingeType,
+    nosePads,
+    itemType,
+  } = req.query;
+  let filter = {};
+  if (keywords) {
+    const searchPattern = RegExp(`${keywords}`, "i");
+    filter.$or = [
+      { name: { $regex: searchPattern } },
+      { barcode: { $regex: searchPattern } },
+    ];
+  }
+  if (priceMax && priceMin) {
+    filter.price = { $gte: parseInt(priceMin), $lt: parseInt(priceMax) };
+  }
+  if (eyeSizeMax && eyeSizeMin) {
+    filter.eyeSize = { $gte: eyeSizeMin, $lt: eyeSizeMax };
+  }
+  if (templeLengthMax && templeLengthMin) {
+    filter.templeLength = { $gte: templeLengthMin, $lt: templeLengthMax };
+  }
+  if (colorGroup) {
+    filter.colorGroup = colorGroup;
+  }
+  if (material) {
+    filter.material = material;
+  }
+  if (frameShape) {
+    filter.frameShape = frameShape;
+  }
+  if (frameType) {
+    filter.frameType = frameType;
+  }
+  if (hingeType) {
+    filter.hingeType = hingeType;
+  }
+  if (nosePads) {
+    filter.hasNosePads = nosePads;
+  }
+  if (itemType) {
+    filter.itemType = itemType;
+  }
+
+  if (pageNum <= 0) {
+    return res.json({
+      success: false,
+      msg: "Invalid page number, page number starts from 1",
+    });
+  }
+  if (pageSize <= 0) {
+    return res.json({
+      success: false,
+      msg: "Invalid page size, must be greater than 0",
+    });
+  }
   try {
-    const items = await Item.find().sort({ barcode: 1 });
+    const items = await Item.find(filter)
+      .limit(pageSize)
+      .skip(pageSize * (pageNum - 1))
+      .sort({ barcode: 1 });
     res.json(items);
   } catch (err) {
     res.status(500).json({
@@ -34,23 +122,23 @@ router.get("/", async (req, res) => {
 //@desc Search inventory by name
 //@access Public
 
-router.post("/search", async (req, res) => {
-  try {
-    const searchPattern = RegExp(`${req.body.query}`, "i");
-    const items = await Item.find({
-      $or: [
-        { name: { $regex: searchPattern } },
-        { barcode: { $regex: searchPattern } },
-      ],
-    }).sort({ barcode: 1 });
-    res.json(items);
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      msg: `${err.message}. Server internal error. Cannot handle request at the moment`,
-    });
-  }
-});
+// router.post("/search", async (req, res) => {
+//   try {
+//     const searchPattern = RegExp(`${req.body.query}`, "i");
+//     const items = await Item.find({
+//       $or: [
+//         { name: { $regex: searchPattern } },
+//         { barcode: { $regex: searchPattern } },
+//       ],
+//     }).sort({ barcode: 1 });
+//     res.json(items);
+//   } catch (err) {
+//     res.status(500).json({
+//       success: false,
+//       msg: `${err.message}. Server internal error. Cannot handle request at the moment`,
+//     });
+//   }
+// });
 
 //@Route GET api/items
 //@desc Search inventory by barcode

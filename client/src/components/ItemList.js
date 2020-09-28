@@ -30,7 +30,6 @@ const ItemList = ({
   item,
   isAuthenticated,
   updateItem,
-  searchTerm,
   resetStatus,
   error,
   clearErrors,
@@ -42,9 +41,26 @@ const ItemList = ({
   const [currentItem, setCurrentItem] = useState({});
   const [itemImage, setItemImage] = useState();
   const [inputModified, setInputModified] = useState({});
-  const [keyWords, setKeyWords] = useState("");
   const [colorDropDownOpen, setColorDropDownOpen] = useState(false);
   const [colorSearchValue, setColorSearchValue] = useState("");
+  const [itemQuery, setItemQuery] = useState({
+    keywords: null,
+    pageNum: null,
+    pageSize: null,
+    priceMax: null,
+    priceMin: null,
+    colorGroup: null,
+    material: null,
+    eyeSizeMax: null,
+    eyeSizeMin: null,
+    templeLengthMax: null,
+    templeLengthMin: null,
+    frameShape: null,
+    frameType: null,
+    hingeType: null,
+    nosePads: null,
+    eyewearType: null,
+  });
 
   const toggleColorDropDown = () => {
     setColorDropDownOpen(!colorDropDownOpen);
@@ -73,13 +89,14 @@ const ItemList = ({
     setInputModified({ ...inputModified, [e.target.name]: true });
   };
 
-  const onSearch = () => {
-    searchTerm(keyWords);
+  const onSearch = (e) => {
+    // setItemQuery({...itemQuery,keywords:})
+    getItems(itemQuery);
   };
 
   const onKeyPress = (e) => {
     if (e.key === "Enter") {
-      searchTerm(keyWords);
+      getItems(itemQuery);
     }
   };
 
@@ -142,7 +159,7 @@ const ItemList = ({
   }, [currentItem]);
 
   useEffect(() => {
-    getItems();
+    getItems(itemQuery);
   }, []);
   useEffect(() => {
     if (error.id === "ITEM_ERROR") {
@@ -163,8 +180,10 @@ const ItemList = ({
       <SearchBar
         onSearch={onSearch}
         onKeyPress={onKeyPress}
-        onChange={(e) => setKeyWords(e.target.value)}
-        value={keyWords}
+        onChange={(e) =>
+          setItemQuery({ ...itemQuery, keywords: e.target.value })
+        }
+        value={itemQuery.keywords}
       />
       <Container
         style={{ height: "50vh" }}
@@ -257,7 +276,6 @@ ItemList.propTypes = {
   updateItem: PropTypes.func.isRequired,
   error: PropTypes.object.isRequired,
   resetStatus: PropTypes.func.isRequired,
-  searchTerm: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -270,7 +288,6 @@ export default connect(mapStateToProps, {
   getItems,
   deleteItem,
   updateItem,
-  searchTerm,
   resetStatus,
   clearErrors,
 })(ItemList);
