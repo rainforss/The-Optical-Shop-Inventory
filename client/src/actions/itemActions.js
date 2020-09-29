@@ -5,44 +5,11 @@ import { returnErrors } from "./errorActions";
 
 export const getItems = (query) => async (dispatch) => {
   dispatch(setItemsLoading());
-  const {
-    keywords,
-    pageNum,
-    pageSize,
-    priceMax,
-    priceMin,
-    colorGroup,
-    material,
-    eyeSizeMax,
-    eyeSizeMin,
-    templeLengthMax,
-    templeLengthMin,
-    frameShape,
-    frameType,
-    hingeType,
-    nosePads,
-    itemType,
-  } = query;
+  const filters = { ...query };
+
   try {
     const res = await axios.get("/api/items", {
-      params: {
-        keywords,
-        pageNum,
-        pageSize,
-        priceMax,
-        priceMin,
-        colorGroup,
-        material,
-        eyeSizeMax,
-        eyeSizeMin,
-        templeLengthMax,
-        templeLengthMin,
-        frameShape,
-        frameType,
-        hingeType,
-        nosePads,
-        itemType,
-      },
+      params: filters,
     });
     dispatch({
       type: types.GET_ITEMS,

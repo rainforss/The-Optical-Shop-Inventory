@@ -7,6 +7,8 @@ import {
   Card,
   CardImg,
   Spinner,
+  Row,
+  Col,
 } from "reactstrap";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { connect } from "react-redux";
@@ -15,7 +17,6 @@ import {
   deleteItem,
   updateItem,
   resetStatus,
-  searchTerm,
 } from "../actions/itemActions";
 import { clearErrors } from "../actions/errorActions";
 import PropTypes from "prop-types";
@@ -23,6 +24,7 @@ import ModifyModal from "./common/ModifyModal";
 import validate from "./common/validation";
 import SearchBar from "./common/SearchBar";
 import { toast } from "react-toastify";
+import Filter from "./Filter";
 
 const ItemList = ({
   getItems,
@@ -43,24 +45,38 @@ const ItemList = ({
   const [inputModified, setInputModified] = useState({});
   const [colorDropDownOpen, setColorDropDownOpen] = useState(false);
   const [colorSearchValue, setColorSearchValue] = useState("");
-  const [itemQuery, setItemQuery] = useState({
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [itemFilters, setItemFilters] = useState({
     keywords: null,
     pageNum: null,
     pageSize: null,
-    priceMax: null,
-    priceMin: null,
-    colorGroup: null,
-    material: null,
-    eyeSizeMax: null,
-    eyeSizeMin: null,
-    templeLengthMax: null,
-    templeLengthMin: null,
-    frameShape: null,
-    frameType: null,
-    hingeType: null,
-    nosePads: null,
-    eyewearType: null,
+    colorGroup: [],
+    material: [],
+    frameShape: [],
+    frameType: [],
+    hingeType: [],
+    hasNosePads: [],
+    itemType: [],
   });
+
+  // const [itemQuery, setItemQuery] = useState({
+  //   keywords: null,
+  //   pageNum: null,
+  //   pageSize: null,
+  //   priceMax: null,
+  //   priceMin: null,
+  //   colorGroup: null,
+  //   material: null,
+  //   eyeSizeMax: null,
+  //   eyeSizeMin: null,
+  //   templeLengthMax: null,
+  //   templeLengthMin: null,
+  //   frameShape: null,
+  //   frameType: null,
+  //   hingeType: null,
+  //   nosePads: null,
+  //   eyewearType: null,
+  // });
 
   const toggleColorDropDown = () => {
     setColorDropDownOpen(!colorDropDownOpen);
@@ -73,6 +89,24 @@ const ItemList = ({
       colorGroup: e.currentTarget.dataset.group,
     });
     setInputModified({ ...inputModified, [e.currentTarget.name]: true });
+  };
+
+  const onFilterSelect = (e) => {
+    const filterName = e.target.name;
+    const targetArray = [...itemFilters[filterName]];
+    if (targetArray.includes(e.target.dataset.name)) {
+      const index = targetArray.findIndex(
+        (element) => element === e.target.dataset.name
+      );
+      targetArray.splice(index, 1);
+    } else {
+      targetArray.push(e.target.dataset.name);
+    }
+    setItemFilters({ ...itemFilters, [filterName]: [...targetArray] });
+  };
+
+  const onFilterApply = () => {
+    getItems(itemFilters);
   };
 
   const onDelete = (e) => {
@@ -89,14 +123,14 @@ const ItemList = ({
     setInputModified({ ...inputModified, [e.target.name]: true });
   };
 
-  const onSearch = (e) => {
-    // setItemQuery({...itemQuery,keywords:})
-    getItems(itemQuery);
-  };
+  // const onSearch = (e) => {
+  //   // setItemQuery({...itemQuery,keywords:})
+  //   getItems(itemQuery);
+  // };
 
   const onKeyPress = (e) => {
     if (e.key === "Enter") {
-      getItems(itemQuery);
+      onFilterApply();
     }
   };
 
@@ -128,10 +162,7 @@ const ItemList = ({
       row: currentItem.row,
       column: currentItem.column,
       price: currentItem.price,
-      inStock:
-        currentItem.inStock === "YES" || currentItem.inStock === true
-          ? true
-          : false,
+      inStock: currentItem.inStock,
       itemType: currentItem.itemType,
       eyeSize: currentItem.eyeSize,
       bridgeWidth: currentItem.bridgeWidth,
@@ -159,7 +190,7 @@ const ItemList = ({
   }, [currentItem]);
 
   useEffect(() => {
-    getItems(itemQuery);
+    getItems(itemFilters);
   }, []);
   useEffect(() => {
     if (error.id === "ITEM_ERROR") {
@@ -175,16 +206,35 @@ const ItemList = ({
       }
     }
   }, [error, item.actionSuccess, modalOpen]);
+
+  console.log("itemlist render");
   return (
     <>
-      <SearchBar
-        onSearch={onSearch}
-        onKeyPress={onKeyPress}
-        onChange={(e) =>
-          setItemQuery({ ...itemQuery, keywords: e.target.value })
-        }
-        value={itemQuery.keywords}
-      />
+      <Row>
+        <Col sm={3} className="d-flex justify-content-start align-items-center">
+          <Filter
+            filterOpen={filterOpen}
+            toggleFilter={() => setFilterOpen(!filterOpen)}
+            onChange={onFilterSelect}
+            filterInfo={itemFilters}
+            applyFilter={() => {
+              onFilterApply();
+              setFilterOpen(!filterOpen);
+            }}
+          />
+        </Col>
+        <Col sm={9}>
+          <SearchBar
+            onSearch={onFilterApply}
+            onKeyPress={onKeyPress}
+            onChange={(e) =>
+              setItemFilters({ ...itemFilters, keywords: e.target.value })
+            }
+            value={itemFilters.keywords}
+          />
+        </Col>
+      </Row>
+
       <Container
         style={{ height: "50vh" }}
         className={

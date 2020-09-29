@@ -50,7 +50,7 @@ const ItemSchema = new mongoose.Schema(
       required: true,
     },
     hasNosePads: {
-      type: Boolean,
+      type: String,
       required: true,
     },
 
@@ -72,7 +72,7 @@ const ItemSchema = new mongoose.Schema(
       default: "Sunglasses",
     },
     inStock: {
-      type: Boolean,
+      type: String,
       required: true,
       default: true,
     },

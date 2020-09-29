@@ -39,18 +39,13 @@ router.get("/", async (req, res) => {
     keywords,
     pageNum,
     pageSize,
-    priceMax,
-    priceMin,
+
     colorGroup,
     material,
-    eyeSizeMax,
-    eyeSizeMin,
-    templeLengthMax,
-    templeLengthMin,
     frameShape,
     frameType,
     hingeType,
-    nosePads,
+    hasNosePads,
     itemType,
   } = req.query;
   let filter = {};
@@ -61,35 +56,26 @@ router.get("/", async (req, res) => {
       { barcode: { $regex: searchPattern } },
     ];
   }
-  if (priceMax && priceMin) {
-    filter.price = { $gte: parseInt(priceMin), $lt: parseInt(priceMax) };
-  }
-  if (eyeSizeMax && eyeSizeMin) {
-    filter.eyeSize = { $gte: eyeSizeMin, $lt: eyeSizeMax };
-  }
-  if (templeLengthMax && templeLengthMin) {
-    filter.templeLength = { $gte: templeLengthMin, $lt: templeLengthMax };
-  }
   if (colorGroup) {
-    filter.colorGroup = colorGroup;
+    filter.colorGroup = { $in: colorGroup };
   }
   if (material) {
-    filter.material = material;
+    filter.material = { $in: material };
   }
   if (frameShape) {
-    filter.frameShape = frameShape;
+    filter.frameShape = { $in: frameShape };
   }
   if (frameType) {
-    filter.frameType = frameType;
+    filter.frameType = { $in: frameType };
   }
   if (hingeType) {
-    filter.hingeType = hingeType;
+    filter.hingeType = { $in: hingeType };
   }
-  if (nosePads) {
-    filter.hasNosePads = nosePads;
+  if (hasNosePads) {
+    filter.hasNosePads = { $in: hasNosePads };
   }
   if (itemType) {
-    filter.itemType = itemType;
+    filter.itemType = { $in: itemType };
   }
 
   if (pageNum <= 0) {
@@ -106,14 +92,14 @@ router.get("/", async (req, res) => {
   }
   try {
     const items = await Item.find(filter)
-      .limit(pageSize)
-      .skip(pageSize * (pageNum - 1))
+      .limit(parseInt(pageSize))
+      .skip(parseInt(pageSize) * (parseInt(pageNum) - 1))
       .sort({ barcode: 1 });
     res.json(items);
   } catch (err) {
     res.status(500).json({
       success: false,
-      msg: "Server internal error. Cannot handle request at the moment",
+      msg: `${err.message}. Server internal error. Cannot handle request at the moment`,
     });
   }
 });

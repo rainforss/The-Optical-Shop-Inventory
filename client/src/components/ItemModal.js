@@ -40,7 +40,7 @@ const ItemModal = ({
     frameColor: "#000000",
     colorGroup: "grey",
     hingeType: "standard",
-    hasNosePads: true,
+    hasNosePads: "YES",
     barcode: "",
     row: "",
     column: "",
@@ -91,7 +91,7 @@ const ItemModal = ({
       frameColor: "#000000",
       colorGroup: "grey",
       hingeType: "standard",
-      hasNosePads: true,
+      hasNosePads: "YES",
       barcode: "",
       row: "",
       column: "",
@@ -237,7 +237,7 @@ const ItemModal = ({
       row: itemInfo.row,
       column: itemInfo.column,
       price: itemInfo.price,
-      inStock: itemInfo.inStock === "YES" ? true : false,
+      inStock: itemInfo.inStock,
       itemType: itemInfo.itemType,
       eyeSize: itemInfo.eyeSize,
       bridgeWidth: itemInfo.bridgeWidth,
@@ -406,8 +406,8 @@ const ItemModal = ({
               onChange={onChange}
               selected={itemInfo.hasNosePads}
               options={[
-                { text: "YES", value: true },
-                { text: "NO", value: false },
+                { text: "YES", value: "YES" },
+                { text: "NO", value: "NO" },
               ]}
             />
 
