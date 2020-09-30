@@ -279,7 +279,9 @@ const ItemModal = ({
           Add Item
         </Button>
       ) : (
-        <Alert color="primary">Please log in to manage inventory</Alert>
+        <Alert color="primary" className="mb-5">
+          Please log in to manage inventory
+        </Alert>
       )}
 
       <Modal isOpen={modalOpen} toggle={toggle}>

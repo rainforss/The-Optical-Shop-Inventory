@@ -27,6 +27,7 @@ const ColorSelector = ({
   onChange,
   onClick,
   warning,
+  disabled,
 }) => {
   const filteredColors = NamedColors.filter((color) =>
     color.group.toLowerCase().includes(colorSearchValue)
@@ -56,6 +57,7 @@ const ColorSelector = ({
               padding: "0px 6px 0px 6px",
             }}
             caret
+            disabled={disabled}
           >
             Choose Color
           </DropdownToggle>

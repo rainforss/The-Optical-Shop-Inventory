@@ -49,6 +49,7 @@ const ModifyModal = ({
               error={inputErrors.name}
               onChange={onChange}
               type="text"
+              disabled={!isAuthenticated}
             />
             <Row form>
               <Col xs={4}>
@@ -61,6 +62,7 @@ const ModifyModal = ({
                   onChange={onChange}
                   error={inputErrors.eyeSize}
                   type="text"
+                  disabled={!isAuthenticated}
                 />
               </Col>
               <Col xs={4}>
@@ -73,6 +75,7 @@ const ModifyModal = ({
                   onChange={onChange}
                   error={inputErrors.bridgeWidth}
                   type="text"
+                  disabled={!isAuthenticated}
                 />
               </Col>
               <Col xs={4}>
@@ -85,6 +88,7 @@ const ModifyModal = ({
                   onChange={onChange}
                   error={inputErrors.templeLength}
                   type="text"
+                  disabled={!isAuthenticated}
                 />
               </Col>
             </Row>
@@ -98,6 +102,7 @@ const ModifyModal = ({
                 { text: "Acetate", value: "acetate" },
                 { text: "Composite", value: "composite" },
               ]}
+              disabled={!isAuthenticated}
             />
             <RadioInput
               name="frameShape"
@@ -110,6 +115,7 @@ const ModifyModal = ({
                 { text: "Rect", value: "rectangular" },
                 { text: "Irregular", value: "irregular" },
               ]}
+              disabled={!isAuthenticated}
             />
             <RadioInput
               name="frameType"
@@ -121,6 +127,7 @@ const ModifyModal = ({
                 { text: "Semi-rimless", value: "semiRimless" },
                 { text: "Full-rimless", value: "fullRimless" },
               ]}
+              disabled={!isAuthenticated}
             />
             <ColorSelector
               id="frameColor"
@@ -133,6 +140,7 @@ const ModifyModal = ({
               colorSearchValue={colorSearchValue}
               onChange={changeSearchValue}
               onClick={onColorSelect}
+              disabled={!isAuthenticated}
             />
             <RadioInput
               name="hingeType"
@@ -145,6 +153,7 @@ const ModifyModal = ({
                 { text: "Flex", value: "flex" },
                 { text: "Hingeless", value: "hingeless" },
               ]}
+              disabled={!isAuthenticated}
             />
             <RadioInput
               name="hasNosePads"
@@ -152,9 +161,10 @@ const ModifyModal = ({
               onChange={onChange}
               selected={currentItem.hasNosePads}
               options={[
-                { text: "YES", value: true },
-                { text: "NO", value: false },
+                { text: "YES", value: "YES" },
+                { text: "NO", value: "NO" },
               ]}
+              disabled={!isAuthenticated}
             />
             <TextInput
               label="Item Barcode"
@@ -165,6 +175,7 @@ const ModifyModal = ({
               onChange={onChange}
               error={inputErrors.barcode}
               type="text"
+              disabled={!isAuthenticated}
             />
             <TextInput
               label="Row position"
@@ -175,6 +186,7 @@ const ModifyModal = ({
               onChange={onChange}
               error={inputErrors.row}
               type="text"
+              disabled={!isAuthenticated}
             />
             <TextInput
               label="Column position"
@@ -185,6 +197,7 @@ const ModifyModal = ({
               onChange={onChange}
               error={inputErrors.column}
               type="text"
+              disabled={!isAuthenticated}
             />
             <TextInput
               label="Price"
@@ -195,6 +208,7 @@ const ModifyModal = ({
               onChange={onChange}
               error={inputErrors.price}
               type="text"
+              disabled={!isAuthenticated}
             />
             <SelectInput
               label="In Stock"
@@ -203,6 +217,7 @@ const ModifyModal = ({
               value={currentItem.inStock ? "YES" : "NO"}
               onChange={onChange}
               options={["YES", "NO"]}
+              disabled={!isAuthenticated}
             />
             <SelectInput
               label="Eyewear Type"
@@ -211,6 +226,7 @@ const ModifyModal = ({
               value={currentItem.itemType}
               onChange={onChange}
               options={["Sunglasses", "Eyeglasses"]}
+              disabled={!isAuthenticated}
             />
 
             {isAuthenticated ? (

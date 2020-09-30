@@ -1,14 +1,27 @@
 import React from "react";
 import { FormGroup, Label, Input, Row, Col } from "reactstrap";
 
-const RadioInput = ({ legend, options, name, onChange, selected }) => {
+const RadioInput = ({
+  legend,
+  options,
+  name,
+  onChange,
+  selected,
+  disabled,
+}) => {
   return (
     <FormGroup tag="fieldset" className="mt-4 mb-4">
       <legend style={{ fontSize: "1rem" }}>{legend}</legend>
 
       {options.map((option) => (
         //  <Col key={option.text} xs={12 / options.length}>
-        <FormGroup className="mr-lg-4" key={option.text} check inline>
+        <FormGroup
+          className="mr-lg-4"
+          key={option.text}
+          check
+          inline
+          disabled={disabled}
+        >
           <Label check>
             <Input
               type="radio"
@@ -17,6 +30,7 @@ const RadioInput = ({ legend, options, name, onChange, selected }) => {
               name={name}
               value={option.value}
               checked={option.value === selected}
+              disabled={disabled}
             />
             {option.text}
           </Label>

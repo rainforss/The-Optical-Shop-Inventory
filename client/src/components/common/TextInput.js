@@ -11,9 +11,10 @@ const TextInput = ({
   type,
   value,
   warning,
+  disabled,
 }) => {
   return (
-    <FormGroup>
+    <FormGroup disabled={disabled}>
       <Label for={id}>{label}</Label>
       <Input
         type={type}
@@ -22,8 +23,9 @@ const TextInput = ({
         placeholder={placeHolder}
         onChange={onChange}
         value={value}
-        valid={!error && value ? true : false}
+        valid={!error && value && !disabled ? true : false}
         invalid={error ? true : false}
+        disabled={disabled}
       />
       <FormFeedback valid={!error}>{error}</FormFeedback>
       {warning ? <FormText color="warning">{warning}</FormText> : null}

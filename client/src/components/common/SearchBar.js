@@ -4,7 +4,7 @@ import { Input, Button, Container } from "reactstrap";
 const SearchBar = ({ onSearch, value, onChange, onKeyPress }) => {
   return (
     <Container
-      className="d-flex justify-content-end align-items-center mt-5 mb-5"
+      className="d-flex justify-content-end align-items-center my-5"
       style={{ display: "inline" }}
     >
       <Input
@@ -13,9 +13,10 @@ const SearchBar = ({ onSearch, value, onChange, onKeyPress }) => {
         id="search"
         onChange={onChange}
         onKeyPress={onKeyPress}
-        placeholder="Search..."
+        placeholder="Search for item name or barcode"
         className="mr-4"
-        style={{ display: "inline", width: "60%" }}
+        style={{ display: "inline" }}
+        value={value}
       />
       <Button onClick={onSearch} color="success">
         Search

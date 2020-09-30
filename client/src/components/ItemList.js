@@ -25,6 +25,7 @@ import validate from "./common/validation";
 import SearchBar from "./common/SearchBar";
 import { toast } from "react-toastify";
 import Filter from "./Filter";
+import SortOptions from "./common/SortOptions";
 
 const ItemList = ({
   getItems,
@@ -58,6 +59,7 @@ const ItemList = ({
     hingeType: [],
     hasNosePads: [],
     itemType: [],
+    sortBy: null,
   });
 
   // const [itemQuery, setItemQuery] = useState({
@@ -220,7 +222,11 @@ const ItemList = ({
   return (
     <>
       <Row>
-        <Col sm={3} className="d-flex justify-content-start align-items-center">
+        <Col
+          xs={4}
+          sm={2}
+          className="d-flex justify-content-start align-items-center"
+        >
           <Filter
             filterOpen={filterOpen}
             toggleFilter={() => {
@@ -234,7 +240,27 @@ const ItemList = ({
             }}
           />
         </Col>
-        <Col sm={9}>
+        <Col
+          xs={4}
+          sm={2}
+          className="d-flex justify-content-start align-items-center"
+        >
+          <SortOptions
+            options={[
+              { text: "Price:low to high", value: "price asc" },
+              { text: "Price:high to low", value: "price desc" },
+              { text: "Eyesize:low to high", value: "eyeSize asc" },
+              { text: "Eyesize:high to low", value: "eyeSize desc" },
+              { text: "Temple length:low to high", value: "templeLength asc" },
+              { text: "Temple length:high to low", value: "templeLength desc" },
+            ]}
+            onClick={(e) =>
+              setItemFilters({ ...itemFilters, sortBy: e.currentTarget.name })
+            }
+            selected={itemFilters.sortBy}
+          />
+        </Col>
+        <Col xs={12} sm={8}>
           <SearchBar
             onSearch={onKeywordApply}
             onKeyPress={onKeyPress}

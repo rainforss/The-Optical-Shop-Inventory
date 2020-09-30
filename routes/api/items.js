@@ -47,8 +47,11 @@ router.get("/", async (req, res) => {
     hingeType,
     hasNosePads,
     itemType,
+    sortBy,
   } = req.query;
   let filter = {};
+  let sortName, sequence;
+
   if (keywords) {
     const searchPattern = RegExp(`${keywords}`, "i");
     filter.$or = [
@@ -77,6 +80,9 @@ router.get("/", async (req, res) => {
   if (itemType) {
     filter.itemType = { $in: itemType };
   }
+  if (sortBy) {
+    [sortName, sequence] = sortBy.split(" ");
+  }
 
   if (pageNum <= 0) {
     return res.json({
@@ -94,7 +100,7 @@ router.get("/", async (req, res) => {
     const items = await Item.find(filter)
       .limit(parseInt(pageSize))
       .skip(parseInt(pageSize) * (parseInt(pageNum) - 1))
-      .sort({ barcode: 1 });
+      .sort({ [sortName]: sequence });
     res.json(items);
   } catch (err) {
     res.status(500).json({
