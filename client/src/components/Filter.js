@@ -1,5 +1,6 @@
 import React from "react";
-import { Button } from "reactstrap";
+import { Button, ButtonGroup } from "reactstrap";
+import { X } from "react-bootstrap-icons";
 import CheckBoxInput from "./common/CheckBoxInput";
 
 const Filter = ({
@@ -8,8 +9,8 @@ const Filter = ({
   toggleFilter,
   applyFilter,
   filterInfo,
+  removeFilter,
 }) => {
-  console.log("filter render");
   return (
     <>
       <Button outline color="primary" onClick={toggleFilter}>
@@ -46,6 +47,25 @@ const Filter = ({
           onChange={onChange}
           selected={filterInfo.colorGroup}
         />
+        {filterInfo.colorGroup.length !== 0 ? (
+          <div>
+            {filterInfo.colorGroup.map((color) => (
+              <Button
+                name="colorGroup"
+                value={color}
+                key={color}
+                size="sm"
+                outline
+                color="danger"
+                className="mx-2"
+                onClick={removeFilter}
+              >
+                {color}
+                <X />
+              </Button>
+            ))}
+          </div>
+        ) : null}
         <CheckBoxInput
           name="material"
           id="material"
@@ -58,6 +78,25 @@ const Filter = ({
           onChange={onChange}
           selected={filterInfo.material}
         />
+        {filterInfo.material.length !== 0 ? (
+          <div>
+            {filterInfo.material.map((material) => (
+              <Button
+                name="material"
+                value={material}
+                key={material}
+                size="sm"
+                outline
+                color="danger"
+                className="mx-2"
+                onClick={removeFilter}
+              >
+                {material}
+                <X />
+              </Button>
+            ))}
+          </div>
+        ) : null}
         <CheckBoxInput
           name="frameShape"
           id="frameShape"
@@ -71,6 +110,25 @@ const Filter = ({
           onChange={onChange}
           selected={filterInfo.frameShape}
         />
+        {filterInfo.frameShape.length !== 0 ? (
+          <div>
+            {filterInfo.frameShape.map((shape) => (
+              <Button
+                name="frameShape"
+                value={shape}
+                key={shape}
+                size="sm"
+                outline
+                color="danger"
+                className="mx-2"
+                onClick={removeFilter}
+              >
+                {shape}
+                <X />
+              </Button>
+            ))}
+          </div>
+        ) : null}
         <CheckBoxInput
           name="frameType"
           id="frameType"
@@ -83,6 +141,25 @@ const Filter = ({
           onChange={onChange}
           selected={filterInfo.frameType}
         />
+        {filterInfo.frameType.length !== 0 ? (
+          <div>
+            {filterInfo.frameType.map((type) => (
+              <Button
+                name="frameType"
+                value={type}
+                key={type}
+                size="sm"
+                outline
+                color="danger"
+                className="mx-2"
+                onClick={removeFilter}
+              >
+                {type}
+                <X />
+              </Button>
+            ))}
+          </div>
+        ) : null}
         <CheckBoxInput
           name="hingeType"
           id="hingeType"
@@ -96,6 +173,25 @@ const Filter = ({
           onChange={onChange}
           selected={filterInfo.hingeType}
         />
+        {filterInfo.hingeType.length !== 0 ? (
+          <div>
+            {filterInfo.hingeType.map((type) => (
+              <Button
+                name="hingeType"
+                value={type}
+                key={type}
+                size="sm"
+                outline
+                color="danger"
+                className="mx-2"
+                onClick={removeFilter}
+              >
+                {type}
+                <X />
+              </Button>
+            ))}
+          </div>
+        ) : null}
         <CheckBoxInput
           name="hasNosePads"
           id="hasNosePads"
@@ -107,6 +203,25 @@ const Filter = ({
           onChange={onChange}
           selected={filterInfo.hasNosePads}
         />
+        {filterInfo.hasNosePads.length !== 0 ? (
+          <div>
+            {filterInfo.hasNosePads.map((option) => (
+              <Button
+                name="hasNosePads"
+                value={option}
+                key={option}
+                size="sm"
+                outline
+                color="danger"
+                className="mx-2"
+                onClick={removeFilter}
+              >
+                {option}
+                <X />
+              </Button>
+            ))}
+          </div>
+        ) : null}
         <CheckBoxInput
           name="itemType"
           id="itemType"
@@ -118,9 +233,28 @@ const Filter = ({
           onChange={onChange}
           selected={filterInfo.hasNosePads}
         />
+        {filterInfo.itemType.length !== 0 ? (
+          <div>
+            {filterInfo.itemType.map((type) => (
+              <Button
+                name="itemType"
+                value={type}
+                key={type}
+                size="sm"
+                outline
+                color="danger"
+                className="mx-2"
+                onClick={removeFilter}
+              >
+                {type}
+                <X />
+              </Button>
+            ))}
+          </div>
+        ) : null}
       </div>
     </>
   );
 };
 
-export default Filter;
+export default React.memo(Filter);

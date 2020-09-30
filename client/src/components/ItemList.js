@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Button,
@@ -46,6 +46,7 @@ const ItemList = ({
   const [colorDropDownOpen, setColorDropDownOpen] = useState(false);
   const [colorSearchValue, setColorSearchValue] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
+  const [searchKeywords, setSearchKeywords] = useState("");
   const [itemFilters, setItemFilters] = useState({
     keywords: null,
     pageNum: null,
@@ -105,8 +106,17 @@ const ItemList = ({
     setItemFilters({ ...itemFilters, [filterName]: [...targetArray] });
   };
 
-  const onFilterApply = () => {
-    getItems(itemFilters);
+  const removeFilter = (e) => {
+    const filterName = e.currentTarget.name;
+    const value = e.currentTarget.value;
+    const targetArray = [...itemFilters[filterName]];
+    const index = targetArray.findIndex((element) => element === value);
+    targetArray.splice(index, 1);
+    setItemFilters({ ...itemFilters, [filterName]: [...targetArray] });
+  };
+
+  const onKeywordApply = () => {
+    setItemFilters({ ...itemFilters, keywords: searchKeywords });
   };
 
   const onDelete = (e) => {
@@ -130,7 +140,7 @@ const ItemList = ({
 
   const onKeyPress = (e) => {
     if (e.key === "Enter") {
-      onFilterApply();
+      onKeywordApply();
     }
   };
 
@@ -191,7 +201,7 @@ const ItemList = ({
 
   useEffect(() => {
     getItems(itemFilters);
-  }, []);
+  }, [itemFilters]);
   useEffect(() => {
     if (error.id === "ITEM_ERROR") {
       setServerError({ msg: error.msg.msg });
@@ -207,30 +217,29 @@ const ItemList = ({
     }
   }, [error, item.actionSuccess, modalOpen]);
 
-  console.log("itemlist render");
   return (
     <>
       <Row>
         <Col sm={3} className="d-flex justify-content-start align-items-center">
           <Filter
             filterOpen={filterOpen}
-            toggleFilter={() => setFilterOpen(!filterOpen)}
+            toggleFilter={() => {
+              setFilterOpen(!filterOpen);
+            }}
             onChange={onFilterSelect}
             filterInfo={itemFilters}
+            removeFilter={removeFilter}
             applyFilter={() => {
-              onFilterApply();
               setFilterOpen(!filterOpen);
             }}
           />
         </Col>
         <Col sm={9}>
           <SearchBar
-            onSearch={onFilterApply}
+            onSearch={onKeywordApply}
             onKeyPress={onKeyPress}
-            onChange={(e) =>
-              setItemFilters({ ...itemFilters, keywords: e.target.value })
-            }
-            value={itemFilters.keywords}
+            onChange={(e) => setSearchKeywords(e.target.value)}
+            value={searchKeywords}
           />
         </Col>
       </Row>

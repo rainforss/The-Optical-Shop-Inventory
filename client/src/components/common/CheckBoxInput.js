@@ -31,7 +31,7 @@ const CheckBoxInput = ({ label, name, id, onChange, options, selected }) => {
         </FormGroup>
       ))} */}
       <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-        <DropdownToggle caret block outline color="info">
+        <DropdownToggle caret block color="info">
           {label}
         </DropdownToggle>
         <DropdownMenu className="w-100">
