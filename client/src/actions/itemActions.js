@@ -22,31 +22,31 @@ export const getItems = (query) => async (dispatch) => {
   }
 };
 
-export const searchTerm = (keyword) => async (dispatch) => {
-  dispatch(setItemsLoading());
-  try {
-    let res;
-    let body;
-    if (!keyword) {
-      res = await axios.get("/api/items");
-    } else {
-      // body = JSON.stringify({ query: keyword });
-      const options = {
-        headers: { "Content-Type": "application/json" },
-      };
-      body = JSON.stringify({ query: keyword });
-      res = await axios.post("/api/items/search", body, options);
-    }
-    dispatch({
-      type: types.SEARCH_ITEMS,
-      items: res.data,
-    });
-  } catch (err) {
-    dispatch(
-      returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
-    );
-  }
-};
+// export const searchTerm = (keyword) => async (dispatch) => {
+//   dispatch(setItemsLoading());
+//   try {
+//     let res;
+//     let body;
+//     if (!keyword) {
+//       res = await axios.get("/api/items");
+//     } else {
+//       // body = JSON.stringify({ query: keyword });
+//       const options = {
+//         headers: { "Content-Type": "application/json" },
+//       };
+//       body = JSON.stringify({ query: keyword });
+//       res = await axios.post("/api/items/search", body, options);
+//     }
+//     dispatch({
+//       type: types.SEARCH_ITEMS,
+//       items: res.data,
+//     });
+//   } catch (err) {
+//     dispatch(
+//       returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
+//     );
+//   }
+// };
 
 export const deleteItem = (itemId, imgId) => async (dispatch, getState) => {
   try {
@@ -75,7 +75,7 @@ export const addItem = (newItem, newFile) => async (dispatch, getState) => {
         newFile
       );
       newItem.imageURL = imgResponse.data.secure_url;
-      newItem.imageID = newFile.public_id;
+      newItem.imageID = imgResponse.data.public_id;
     }
 
     const body = JSON.stringify(newItem);

@@ -19,22 +19,6 @@ cloudinary.config({
 //@access Public
 
 router.get("/", async (req, res) => {
-  // const pageNumber = parseInt(req.query.pageNum);
-  // const pageSize = parseInt(req.query.pageSize);
-  // const priceMax = parseInt(req.query.priceMax);
-  // const priceMin = parseInt(req.query.priceMin);
-  // const colorGroup = req.query.colorGroup;
-  // const material = req.query.material;
-  // const eyeSizeMax = parseInt(req.query.eyeSizeMax);
-  // const eyeSizeMin = parseInt(req.query.eyeSizeMin);
-  // const templeLengthMax = parseInt(req.query.templeLengthMax);
-  // const templeLengthMin = parseInt(req.query.templeLengthMin);
-  // const frameShape = req.query.frameShape;
-  // const frameType = req.query.frameType;
-  // const hingeType = req.query.hingeType;
-  // const nosePads = req.query.nosePads;
-  // const eyewearType = req.query.eyewearType;
-
   const {
     keywords,
     pageNum,
@@ -109,28 +93,6 @@ router.get("/", async (req, res) => {
     });
   }
 });
-
-//@route GET api/items
-//@desc Search inventory by name
-//@access Public
-
-// router.post("/search", async (req, res) => {
-//   try {
-//     const searchPattern = RegExp(`${req.body.query}`, "i");
-//     const items = await Item.find({
-//       $or: [
-//         { name: { $regex: searchPattern } },
-//         { barcode: { $regex: searchPattern } },
-//       ],
-//     }).sort({ barcode: 1 });
-//     res.json(items);
-//   } catch (err) {
-//     res.status(500).json({
-//       success: false,
-//       msg: `${err.message}. Server internal error. Cannot handle request at the moment`,
-//     });
-//   }
-// });
 
 //@Route GET api/items
 //@desc Search inventory by barcode
@@ -263,20 +225,11 @@ router.put("/:id", verify, async (req, res) => {
 
 router.post("/:id", verify, async (req, res) => {
   try {
-    //Delete the image on Cloudinary if it is not the default image (non-default images have a public_id)
+    //If image deleted successfully or no image, then remove the item from database
     const { public_id } = req.body;
     if (public_id) {
       cloudinary.uploader.destroy(public_id);
     }
-  } catch (err) {
-    return res.status(500).json({
-      success: false,
-      msg: `${err}. Server error, please try again`,
-    });
-  }
-
-  try {
-    //If image deleted successfully or no image, then remove the item from database
     const toBeDeleted = await Item.findByIdAndDelete(req.params.id);
     res.json({
       success: true,
@@ -285,7 +238,7 @@ router.post("/:id", verify, async (req, res) => {
   } catch (err) {
     return res.status(404).json({
       success: false,
-      msg: `${err.message}. Item was not found in the current inventory`,
+      msg: `${err.message}. Item was not deleted successfully, please try again.`,
     });
   }
 });
