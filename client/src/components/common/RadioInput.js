@@ -14,7 +14,6 @@ const RadioInput = ({
       <legend style={{ fontSize: "1rem" }}>{legend}</legend>
 
       {options.map((option) => (
-        //  <Col key={option.text} xs={12 / options.length}>
         <FormGroup
           className="mr-lg-4"
           key={option.text}
@@ -35,7 +34,6 @@ const RadioInput = ({
             {option.text}
           </Label>
         </FormGroup>
-        //  </Col>
       ))}
     </FormGroup>
   );
