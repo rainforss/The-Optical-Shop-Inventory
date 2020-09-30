@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ButtonGroup } from "reactstrap";
+import { Button } from "reactstrap";
 import { X } from "react-bootstrap-icons";
 import CheckBoxInput from "./common/CheckBoxInput";
 

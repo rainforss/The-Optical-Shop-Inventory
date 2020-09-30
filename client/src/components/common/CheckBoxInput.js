@@ -6,7 +6,6 @@ import {
   Dropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem,
 } from "reactstrap";
 
 const CheckBoxInput = ({ label, name, id, onChange, options, selected }) => {

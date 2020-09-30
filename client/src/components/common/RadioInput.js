@@ -1,5 +1,5 @@
 import React from "react";
-import { FormGroup, Label, Input, Row, Col } from "reactstrap";
+import { FormGroup, Label, Input } from "reactstrap";
 
 const RadioInput = ({
   legend,

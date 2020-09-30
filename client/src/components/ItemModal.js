@@ -275,7 +275,7 @@ const ItemModal = ({
   return (
     <>
       {isAuthenticated ? (
-        <Button color="dark" onClick={toggle}>
+        <Button color="dark" className="mb-5" onClick={toggle}>
           Add Item
         </Button>
       ) : (

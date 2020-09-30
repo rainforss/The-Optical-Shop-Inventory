@@ -62,25 +62,6 @@ const ItemList = ({
     sortBy: null,
   });
 
-  // const [itemQuery, setItemQuery] = useState({
-  //   keywords: null,
-  //   pageNum: null,
-  //   pageSize: null,
-  //   priceMax: null,
-  //   priceMin: null,
-  //   colorGroup: null,
-  //   material: null,
-  //   eyeSizeMax: null,
-  //   eyeSizeMin: null,
-  //   templeLengthMax: null,
-  //   templeLengthMin: null,
-  //   frameShape: null,
-  //   frameType: null,
-  //   hingeType: null,
-  //   nosePads: null,
-  //   eyewearType: null,
-  // });
-
   const toggleColorDropDown = () => {
     setColorDropDownOpen(!colorDropDownOpen);
   };
@@ -134,11 +115,6 @@ const ItemList = ({
     });
     setInputModified({ ...inputModified, [e.target.name]: true });
   };
-
-  // const onSearch = (e) => {
-  //   // setItemQuery({...itemQuery,keywords:})
-  //   getItems(itemQuery);
-  // };
 
   const onKeyPress = (e) => {
     if (e.key === "Enter") {
