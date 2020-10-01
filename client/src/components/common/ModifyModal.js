@@ -49,7 +49,17 @@ const ModifyModal = ({
               error={inputErrors.name}
               onChange={onChange}
               type="text"
-              disabled={!isAuthenticated}
+              disabled={true}
+            />
+            <TextInput
+              label="Item Barcode"
+              name="barcode"
+              id="barcode-mod"
+              value={currentItem.barcode}
+              error={inputErrors.barcode}
+              onChange={onChange}
+              type="text"
+              disabled={true}
             />
             <Row form>
               <Col xs={4}>
@@ -232,15 +242,27 @@ const ModifyModal = ({
             {isAuthenticated ? (
               <>
                 <TextInput
-                  label="Replace Image"
-                  name="file"
-                  id="file"
+                  label="Replace Front View"
+                  name="front"
+                  id="front"
                   type="file"
                   onChange={changeImage}
                   warning={
-                    itemImage
+                    itemImage.front
                       ? null
-                      : "Choose new file if you wish to replace the old image"
+                      : "Choose new front view if you wish to replace the old image"
+                  }
+                />
+                <TextInput
+                  label="Replace Side View"
+                  name="side"
+                  id="side"
+                  type="file"
+                  onChange={changeImage}
+                  warning={
+                    itemImage.side
+                      ? null
+                      : "Choose new side view if you wish to replace the old image"
                   }
                 />
                 <Button

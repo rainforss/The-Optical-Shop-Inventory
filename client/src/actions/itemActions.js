@@ -48,9 +48,9 @@ export const getItems = (query) => async (dispatch) => {
 //   }
 // };
 
-export const deleteItem = (itemId, imgId) => async (dispatch, getState) => {
+export const deleteItem = (itemId, imgIds) => async (dispatch, getState) => {
   try {
-    const body = JSON.stringify({ public_id: imgId });
+    const body = JSON.stringify(imgIds);
     const res = await axios.post(
       `/api/items/${itemId}`,
       body,
@@ -67,23 +67,60 @@ export const deleteItem = (itemId, imgId) => async (dispatch, getState) => {
   }
 };
 
-export const addItem = (newItem, newFile) => async (dispatch, getState) => {
+export const addItem = (newItem, images) => async (dispatch, getState) => {
   try {
-    if (newFile) {
-      const imgResponse = await axios.post(
-        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
-        newFile
-      );
-      newItem.imageURL = imgResponse.data.secure_url;
-      newItem.imageID = imgResponse.data.public_id;
+    if (images.front) {
+      newItem.hasFront = true;
+    } else {
+      newItem.hasFront = false;
+    }
+    if (images.side) {
+      newItem.hasSide = true;
+    } else {
+      newItem.hasSide = false;
     }
 
-    const body = JSON.stringify(newItem);
-    const res = await axios.post(
+    let body = JSON.stringify(newItem);
+    let item = await axios.post(
       "/api/items",
       body,
       tokenConfiguration(getState)
     );
+
+    let versions = {};
+    if (images.front) {
+      const formData = new FormData();
+      formData.append("file", images.front);
+
+      formData.append("upload_preset", "opticalshop");
+      formData.append("public_id", `${newItem.name}AND${newItem.barcode}FRONT`);
+      formData.append("cloud_name", "rainforss");
+      const front = await axios.post(
+        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
+        formData
+      );
+      versions.frontImageVersion = front.data.version;
+    }
+    if (images.side) {
+      const formData = new FormData();
+      formData.append("file", images.side);
+
+      formData.append("upload_preset", "opticalshop");
+      formData.append("public_id", `${newItem.name}AND${newItem.barcode}SIDE`);
+      formData.append("cloud_name", "rainforss");
+      const side = await axios.post(
+        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
+        formData
+      );
+      versions.sideImageVersion = side.data.version;
+    }
+    body = JSON.stringify(versions);
+    const res = await axios.put(
+      `/api/items/${item.data._id}/version`,
+      body,
+      tokenConfiguration(getState)
+    );
+
     dispatch({
       type: types.ADD_ITEM,
       newItem: res.data,
@@ -98,50 +135,72 @@ export const addItem = (newItem, newFile) => async (dispatch, getState) => {
   }
 };
 
-export const updateItem = (updatedItem, itemId, newFile) => async (
+export const updateItem = (updatedItem, itemImage, itemId) => async (
   dispatch,
   getState
 ) => {
-  const hasNewImage = newFile ? true : false;
   try {
-    let res;
     //If new item image is attached, upload the new image to Cloudinary and notify the server to destroy old image
-    if (hasNewImage) {
+    if (itemImage.front) {
       //Get Cloudinary authentication string from the server and post image to Cloudinary
       const info = JSON.stringify({
-        public_id: `${updatedItem.name}AND${updatedItem.barcode}`,
+        public_id: `${updatedItem.name}AND${updatedItem.barcode}FRONT`,
       });
       const authenticate = await axios.post(
         "api/user/getsignature",
         info,
         tokenConfiguration(getState)
       );
+      const newFile = new FormData();
+      newFile.append("file", itemImage.front);
+      newFile.append(
+        "public_id",
+        `${updatedItem.name}AND${updatedItem.barcode}FRONT`
+      );
       newFile.append("api_key", "334344196228832");
       newFile.append("timestamp", authenticate.data.timestamp);
       newFile.append("signature", authenticate.data.signature);
-      const imgResponse = await axios.post(
+      const image = await axios.post(
         "https://api.cloudinary.com/v1_1/rainforss/image/upload",
         newFile
       );
-      console.log(imgResponse);
-      //Attach updated image id and URL for update
-      updatedItem.imageURL = imgResponse.data.secure_url;
-      updatedItem.imageID = imgResponse.data.public_id;
-      const body = JSON.stringify({ updatedItem, hasNewImage: true });
-      res = await axios.put(
-        `api/items/${itemId}`,
-        body,
-        tokenConfiguration(getState)
-      );
-    } else {
-      //If no new image is attached, simply update the item information only
-      const body = JSON.stringify({ updatedItem, hasNewImage: false });
-      res = await axios.put(
-        `api/items/${itemId}`,
-        body,
-        tokenConfiguration(getState)
-      );
+      updatedItem.hasFront = true;
+      updatedItem.frontImageVersion = image.data.version;
     }
+
+    if (itemImage.side) {
+      const info = JSON.stringify({
+        public_id: `${updatedItem.name}AND${updatedItem.barcode}SIDE`,
+      });
+      const authenticate = await axios.post(
+        "api/user/getsignature",
+        info,
+        tokenConfiguration(getState)
+      );
+      const newFile = new FormData();
+      newFile.append("file", itemImage.side);
+      newFile.append(
+        "public_id",
+        `${updatedItem.name}AND${updatedItem.barcode}SIDE`
+      );
+      newFile.append("api_key", "334344196228832");
+      newFile.append("timestamp", authenticate.data.timestamp);
+      newFile.append("signature", authenticate.data.signature);
+      const image = await axios.post(
+        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
+        newFile
+      );
+      updatedItem.hasSide = true;
+      updatedItem.sideImageVersion = image.data.version;
+    }
+
+    const body = JSON.stringify(updatedItem);
+    const res = await axios.put(
+      `api/items/${itemId}`,
+      body,
+      tokenConfiguration(getState)
+    );
+
     //Collect response and dispatch action
     dispatch({
       type: types.UPDATE_ITEM,

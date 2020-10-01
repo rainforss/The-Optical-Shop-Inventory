@@ -48,7 +48,7 @@ const ItemModal = ({
     inStock: "YES",
     itemType: "Sunglasses",
   });
-  const [itemImage, setItemImage] = useState();
+  const [itemImage, setItemImage] = useState({});
   const [inputErrors, setInputErrors] = useState({});
   const [serverError, setServerError] = useState({});
   const [inputModified, setInputModified] = useState({});
@@ -99,7 +99,7 @@ const ItemModal = ({
       inStock: "YES",
       itemType: "Sunglasses",
     });
-    setItemImage();
+    setItemImage({});
   };
 
   const validate = () => {
@@ -221,15 +221,6 @@ const ItemModal = ({
     });
     const errorFree = validateForm();
     if (!errorFree) return;
-    let file;
-    if (itemImage) {
-      file = new FormData();
-      file.append("file", itemImage);
-
-      file.append("upload_preset", "opticalshop");
-      file.append("public_id", `${itemInfo.name}AND${itemInfo.barcode}`);
-      file.append("cloud_name", "rainforss");
-    }
 
     const newItem = {
       name: itemInfo.name,
@@ -250,7 +241,7 @@ const ItemModal = ({
       frameColor: itemInfo.frameColor,
       colorGroup: itemInfo.colorGroup,
     };
-    addItem(newItem, file);
+    addItem(newItem, itemImage);
   };
 
   useEffect(() => {
@@ -470,17 +461,31 @@ const ItemModal = ({
               options={["Sunglasses", "Eyeglasses"]}
             />
             <TextInput
-              label="Upload Image"
-              name="file"
-              id="file"
+              label="Upload Front View"
+              name="frontFile"
+              id="frontFile"
               type="file"
               onChange={(e) => {
-                setItemImage(e.target.files[0]);
+                setItemImage({ ...itemImage, front: e.target.files[0] });
               }}
               warning={
-                itemImage
+                itemImage.front
                   ? null
-                  : "If no image is uploaded at this time, system will use a default image"
+                  : "If no front view is uploaded at this time, system will use a default image"
+              }
+            />
+            <TextInput
+              label="Upload Side View"
+              name="sideFile"
+              id="sideFile"
+              type="file"
+              onChange={(e) => {
+                setItemImage({ ...itemImage, side: e.target.files[0] });
+              }}
+              warning={
+                itemImage.side
+                  ? null
+                  : "If no side view is uploaded at this time, system will use a default image"
               }
             />
             <Button

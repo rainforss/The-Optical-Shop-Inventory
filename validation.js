@@ -1,5 +1,4 @@
 const joi = require("joi");
-const { min } = require("lodash");
 
 module.exports = {
   registerValidation: (data) => {
@@ -50,8 +49,10 @@ module.exports = {
       price: joi.number().positive().max(2000).required(),
       itemType: joi.string().alphanum().required(),
       inStock: joi.string().alphanum().required(),
-      imageURL: joi.string(),
-      imageID: joi.string().allow(""),
+      hasFront: joi.bool(),
+      hasSide: joi.bool(),
+      frontImageVersion: joi.number(),
+      sideImageVersion: joi.number(),
     });
     return schema.validate(data);
   },

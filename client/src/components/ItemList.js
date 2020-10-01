@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import useWindowDimensions from "../hooks/useWindowDimensions";
 import {
   Container,
   Button,
@@ -12,6 +13,7 @@ import {
 } from "reactstrap";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { connect } from "react-redux";
+import { Image, Transformation, Placeholder } from "cloudinary-react";
 import {
   getItems,
   deleteItem,
@@ -38,11 +40,12 @@ const ItemList = ({
   clearErrors,
 }) => {
   const { items } = item;
+  const { height, width } = useWindowDimensions();
   const [modalOpen, setModalOpen] = useState(false);
   const [serverError, setServerError] = useState({});
   const [inputErrors, setInputErrors] = useState({});
   const [currentItem, setCurrentItem] = useState({});
-  const [itemImage, setItemImage] = useState();
+  const [itemImage, setItemImage] = useState({});
   const [inputModified, setInputModified] = useState({});
   const [colorDropDownOpen, setColorDropDownOpen] = useState(false);
   const [colorSearchValue, setColorSearchValue] = useState("");
@@ -50,8 +53,8 @@ const ItemList = ({
   const [searchKeywords, setSearchKeywords] = useState("");
   const [itemFilters, setItemFilters] = useState({
     keywords: null,
-    pageNum: null,
-    pageSize: null,
+    pageNum: 1,
+    pageSize: 6,
     colorGroup: [],
     material: [],
     frameShape: [],
@@ -105,8 +108,14 @@ const ItemList = ({
   const onDelete = (e) => {
     const id = e.target.name;
     const itemInfo = items.find((item) => item._id === id);
-    const imgId = itemInfo.imageID;
-    deleteItem(id, imgId);
+    const imgIds = {};
+    if (itemInfo.hasFront) {
+      imgIds.front = `${itemInfo.name}AND${itemInfo.barcode}FRONT`;
+    }
+    if (itemInfo.hasSide) {
+      imgIds.side = `${itemInfo.name}AND${itemInfo.barcode}SIDE`;
+    }
+    deleteItem(id, imgIds);
   };
   const onChange = (e) => {
     setCurrentItem({
@@ -126,24 +135,18 @@ const ItemList = ({
     if (modalOpen) {
       clearErrors();
       setInputModified({});
-      setItemImage();
+      setItemImage({});
     }
     setModalOpen(!modalOpen);
   };
 
   const changeImage = (e) => {
-    setItemImage(e.target.files[0]);
+    setItemImage({ ...itemImage, [e.target.name]: e.target.files[0] });
   };
   const onSubmit = (e) => {
     e.preventDefault();
     const errorFree = validate(currentItem, setInputErrors).Form();
     if (!errorFree) return;
-    let file;
-    if (itemImage) {
-      file = new FormData();
-      file.append("file", itemImage);
-      file.append("public_id", `${currentItem.name}AND${currentItem.barcode}`);
-    }
     const updatedItem = {
       name: currentItem.name,
       barcode: currentItem.barcode,
@@ -164,7 +167,7 @@ const ItemList = ({
       hasNosePads: currentItem.hasNosePads,
     };
 
-    updateItem(updatedItem, currentItem._id, file);
+    updateItem(updatedItem, itemImage, currentItem._id);
   };
 
   const onView = (e) => {
@@ -199,7 +202,7 @@ const ItemList = ({
     <>
       <Row>
         <Col
-          xs={4}
+          xs={3}
           sm={2}
           className="d-flex justify-content-start align-items-center"
         >
@@ -217,7 +220,7 @@ const ItemList = ({
           />
         </Col>
         <Col
-          xs={4}
+          xs={3}
           sm={2}
           className="d-flex justify-content-start align-items-center"
         >
@@ -230,13 +233,34 @@ const ItemList = ({
               { text: "Temple length:low to high", value: "templeLength asc" },
               { text: "Temple length:high to low", value: "templeLength desc" },
             ]}
+            sortName="Sort By"
             onClick={(e) =>
               setItemFilters({ ...itemFilters, sortBy: e.currentTarget.name })
             }
             selected={itemFilters.sortBy}
           />
         </Col>
-        <Col xs={12} sm={8}>
+        <Col
+          xs={6}
+          sm={2}
+          className="d-flex justify-content-start align-items-center"
+        >
+          <SortOptions
+            options={[
+              { text: "3 items per page", value: 3 },
+              { text: "6 items per page", value: 6 },
+              { text: "12 items per page", value: 12 },
+              { text: "24 items per page", value: 24 },
+              { text: "48 items per page", value: 48 },
+            ]}
+            sortName={`${itemFilters.pageSize} Per Page`}
+            onClick={(e) =>
+              setItemFilters({ ...itemFilters, pageSize: e.currentTarget.name })
+            }
+            selected={itemFilters.pageSize}
+          />
+        </Col>
+        <Col xs={12} sm={6}>
           <SearchBar
             onSearch={onKeywordApply}
             onKeyPress={onKeyPress}
@@ -259,21 +283,85 @@ const ItemList = ({
         <TransitionGroup className="item-list d-flex flex-wrap justify-content-start">
           {items
             ? items.map(
-                ({ _id, name, barcode, price, row, column, imageURL }) => (
+                ({
+                  _id,
+                  name,
+                  barcode,
+                  price,
+                  row,
+                  column,
+                  colorGroup,
+                  hasFront,
+                  hasSide,
+                  frontImageVersion,
+                  sideImageVersion,
+                  eyeSize,
+                  bridgeWidth,
+                  templeLength,
+                }) => (
                   <CSSTransition key={_id} timeout={500} classNames="fade">
                     <Card className="item-card mt-4 mb-4 ml-2 mr-2 d-flex flex-column justify-content-around align-items-center p-2">
-                      <CardImg
+                      {/* <CardImg
                         top
                         width="100%"
                         height="40%"
                         src={imageURL}
                         alt="Item image"
-                      />
+                      /> */}
+                      <Container fluid className="p-0 flip-card">
+                        <div className="flip-card-inner">
+                          <div className="flip-card-front">
+                            {/* <img
+                              src={imageURL}
+                              alt="Picture"
+                              style={{ width: "100%", height: "100%" }}
+                            /> */}
+                            <Image
+                              cloudName="rainforss"
+                              publicId={
+                                hasFront
+                                  ? `${name}AND${barcode}FRONT`
+                                  : "sample"
+                              }
+                              version={frontImageVersion}
+                            >
+                              <Placeholder type="pixelate" />
+                              <Transformation
+                                quality="auto"
+                                fetchFormat="auto"
+                                width={width < 410 ? "250" : "300"}
+                                height={width < 410 ? "170" : "200"}
+                                crop="scale"
+                              />
+                            </Image>
+                          </div>
+                          <div className="flip-card-back">
+                            <Image
+                              cloudName="rainforss"
+                              publicId={
+                                hasSide ? `${name}AND${barcode}SIDE` : "sample"
+                              }
+                              version={sideImageVersion}
+                            >
+                              <Transformation
+                                quality="auto"
+                                fetchFormat="auto"
+                                width={width < 410 ? "250" : "300"}
+                                height={width < 410 ? "170" : "200"}
+                                crop="scale"
+                              />
+                            </Image>
+                          </div>
+                        </div>
+                      </Container>
                       <CardTitle className="text-center font-weight-bold">
                         {name}
                       </CardTitle>
                       <CardSubtitle className="text-center">
-                        Barcode: {barcode}
+                        Dimension: {eyeSize}-{bridgeWidth}-{templeLength}
+                      </CardSubtitle>
+                      <CardSubtitle className="text-center">
+                        Color Group: {colorGroup}
                       </CardSubtitle>
                       <CardSubtitle className="text-center">
                         Price: {price} CAD

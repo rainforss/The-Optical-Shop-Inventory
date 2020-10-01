@@ -109,28 +109,7 @@ router.post("/", verify, async (req, res) => {
     return res.status(400).json({ msg: error.details[0].message });
   }
   //const currentUser = await User.findOne({ _id: req.user });
-  const newItem = new Item({
-    name: req.body.name,
-    eyeSize: req.body.eyeSize,
-    bridgeWidth: req.body.bridgeWidth,
-    templeLength: req.body.templeLength,
-    material: req.body.material,
-    frameShape: req.body.frameShape,
-    frameType: req.body.frameType,
-    frameColor: req.body.frameColor,
-    colorGroup: req.body.colorGroup,
-    hingeType: req.body.hingeType,
-    hasNosePads: req.body.hasNosePads,
-    barcode: req.body.barcode,
-    row: req.body.row,
-    column: req.body.column,
-    price: req.body.price,
-    itemType: req.body.itemType,
-    inStock: req.body.inStock,
-    imageURL: req.body.imageURL,
-    imageID: req.body.imageID,
-    lastModifiedBy: req.user,
-  });
+
   try {
     const itemAtSamePosition = await Item.findOne({
       row: req.body.row,
@@ -142,6 +121,28 @@ router.post("/", verify, async (req, res) => {
         msg:
           "Item with same location already exists in the inventory, pick another location",
       });
+    const newItem = new Item({
+      name: req.body.name,
+      eyeSize: req.body.eyeSize,
+      bridgeWidth: req.body.bridgeWidth,
+      templeLength: req.body.templeLength,
+      material: req.body.material,
+      frameShape: req.body.frameShape,
+      frameType: req.body.frameType,
+      frameColor: req.body.frameColor,
+      colorGroup: req.body.colorGroup,
+      hingeType: req.body.hingeType,
+      hasNosePads: req.body.hasNosePads,
+      barcode: req.body.barcode,
+      row: req.body.row,
+      column: req.body.column,
+      price: req.body.price,
+      itemType: req.body.itemType,
+      inStock: req.body.inStock,
+      hasFront: req.body.hasFront,
+      hasSide: req.body.hasSide,
+      lastModifiedBy: req.user,
+    });
     const savedItem = await newItem.save();
     res.json(savedItem);
   } catch (err) {
@@ -151,13 +152,55 @@ router.post("/", verify, async (req, res) => {
   }
 });
 
+//@route PUT api/items/:id/version
+//@desc Update an item image version
+//@access Private
+
+router.put("/:id/version", verify, async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { frontImageVersion, sideImageVersion } = req.body;
+    let item;
+    if (frontImageVersion && sideImageVersion) {
+      item = await Item.findByIdAndUpdate(
+        id,
+        {
+          frontImageVersion: frontImageVersion,
+          sideImageVersion: sideImageVersion,
+        },
+        { new: true }
+      );
+    } else if (!frontImageVersion && sideImageVersion) {
+      item = await Item.findByIdAndUpdate(
+        id,
+        { sideImageVersion: sideImageVersion },
+        { new: true }
+      );
+    } else if (frontImageVersion && !sideImageVersion) {
+      item = await Item.findByIdAndUpdate(
+        id,
+        { frontImageVersion: frontImageVersion },
+        { new: true }
+      );
+    } else {
+      item = await Item.findById(id);
+    }
+
+    res.json(item);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ success: false, msg: `${err}, version update failed` });
+  }
+});
+
 //@route PUT api/items/:id
 //@desc Update an item
 //@access Private
 
 router.put("/:id", verify, async (req, res) => {
   //Validate input data before sending
-  const { updatedItem, hasNewImage } = req.body;
+  const updatedItem = req.body;
   const { error } = validate.itemValidation(updatedItem);
   if (error) {
     return res.status(400).json({ msg: error.details[0].message });
@@ -197,16 +240,17 @@ router.put("/:id", verify, async (req, res) => {
     toBeUpdated.inStock = updatedItem.inStock;
     toBeUpdated.itemType = updatedItem.itemType;
     toBeUpdated.lastModifiedBy = req.user;
-    //Update the image id and URL if new image updated
-    if (hasNewImage && updatedItem.imageID && updatedItem.imageURL) {
-      //Destroy if the current image is not the default file, if imageID remains the same Cloudinary will invalidate the old version so no action required
-      if (toBeUpdated.imageID !== updatedItem.imageID) {
-        cloudinary.uploader.destroy(toBeUpdated.imageID, { invalidate: true });
-      }
-
-      //After disposal of old image information, set updated information
-      toBeUpdated.imageID = updatedItem.imageID;
-      toBeUpdated.imageURL = updatedItem.imageURL;
+    if (updatedItem.hasFront) {
+      toBeUpdated.hasFront = updatedItem.hasFront;
+    }
+    if (updatedItem.hasSide) {
+      toBeUpdated.hasSide = updatedItem.hasSide;
+    }
+    if (updatedItem.sideImageVersion) {
+      toBeUpdated.sideImageVersion = updatedItem.sideImageVersion;
+    }
+    if (updatedItem.frontImageVersion) {
+      toBeUpdated.frontImageVersion = updatedItem.frontImageVersion;
     }
 
     //Send new information back to the app for re-rendering
@@ -226,9 +270,12 @@ router.put("/:id", verify, async (req, res) => {
 router.post("/:id", verify, async (req, res) => {
   try {
     //If image deleted successfully or no image, then remove the item from database
-    const { public_id } = req.body;
-    if (public_id) {
-      cloudinary.uploader.destroy(public_id);
+    const { front, side } = req.body;
+    if (front) {
+      cloudinary.uploader.destroy(front);
+    }
+    if (side) {
+      cloudinary.uploader.destroy(side);
     }
     const toBeDeleted = await Item.findByIdAndDelete(req.params.id);
     res.json({

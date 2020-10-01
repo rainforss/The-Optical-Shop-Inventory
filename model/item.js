@@ -76,13 +76,19 @@ const ItemSchema = new mongoose.Schema(
       required: true,
       default: true,
     },
-    imageURL: {
-      type: String,
+    hasFront: {
+      type: Boolean,
       required: true,
-      default:
-        "https://res.cloudinary.com/rainforss/image/upload/v1600671896/sample.jpg",
     },
-    imageID: {
+    hasSide: {
+      type: Boolean,
+      required: true,
+    },
+    frontImageVersion: {
+      type: String,
+      default: "",
+    },
+    sideImageVersion: {
       type: String,
       default: "",
     },
