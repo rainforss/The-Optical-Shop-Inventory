@@ -49,7 +49,10 @@ router.post("/register", async (req, res) => {
   //Only a list of invited users can register for the app
   if (
     req.body.email === process.env.ACCEPTED_EMAIL_1 ||
-    req.body.email === process.env.ACCEPTED_EMAIL_2
+    req.body.email === process.env.ACCEPTED_EMAIL_2 ||
+    req.body.email === process.env.ACCEPTED_EMAIL_3 ||
+    req.body.email === process.env.ACCEPTED_EMAIL_4 ||
+    req.body.email === process.env.ACCEPTED_EMAIL_5
   ) {
     const user = new User({
       name: req.body.name,

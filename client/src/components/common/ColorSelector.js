@@ -30,7 +30,7 @@ const ColorSelector = ({
   disabled,
 }) => {
   const filteredColors = NamedColors.filter((color) =>
-    color.group.toLowerCase().includes(colorSearchValue)
+    color.group.toLowerCase().includes(colorSearchValue.toLowerCase())
   );
   return (
     <FormGroup>

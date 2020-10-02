@@ -187,6 +187,7 @@ const ItemList = ({
 
   useEffect(() => {
     getItems(itemFilters, clearItems);
+    window.scrollBy(0, 1000);
   }, [itemFilters, clearItems]);
   useEffect(() => {
     if (error.id === "ITEM_ERROR") {
