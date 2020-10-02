@@ -3,8 +3,8 @@ import axios from "axios";
 import { tokenConfiguration } from "./authActions";
 import { returnErrors } from "./errorActions";
 
-export const getItems = (query) => async (dispatch) => {
-  dispatch(setItemsLoading());
+export const getItems = (query, clear) => async (dispatch) => {
+  dispatch(setItemsLoading(clear));
   const filters = { ...query };
 
   try {
@@ -13,7 +13,8 @@ export const getItems = (query) => async (dispatch) => {
     });
     dispatch({
       type: types.GET_ITEMS,
-      items: res.data,
+      items: res.data.items,
+      count: res.data.count,
     });
   } catch (err) {
     dispatch(
@@ -222,8 +223,9 @@ export const resetStatus = () => {
   };
 };
 
-export const setItemsLoading = () => {
+export const setItemsLoading = (clear) => {
   return {
     type: types.ITEMS_LOADING,
+    clear: clear,
   };
 };

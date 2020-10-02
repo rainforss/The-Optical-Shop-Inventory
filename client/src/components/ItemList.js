@@ -6,12 +6,10 @@ import {
   CardTitle,
   CardSubtitle,
   Card,
-  CardImg,
   Spinner,
   Row,
   Col,
 } from "reactstrap";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { connect } from "react-redux";
 import { Image, Transformation, Placeholder } from "cloudinary-react";
 import {
@@ -28,6 +26,7 @@ import SearchBar from "./common/SearchBar";
 import { toast } from "react-toastify";
 import Filter from "./Filter";
 import SortOptions from "./common/SortOptions";
+import Footer from "./common/Footer";
 
 const ItemList = ({
   getItems,
@@ -39,7 +38,7 @@ const ItemList = ({
   error,
   clearErrors,
 }) => {
-  const { items } = item;
+  const { items, totalCount } = item;
   const { height, width } = useWindowDimensions();
   const [modalOpen, setModalOpen] = useState(false);
   const [serverError, setServerError] = useState({});
@@ -51,6 +50,7 @@ const ItemList = ({
   const [colorSearchValue, setColorSearchValue] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [searchKeywords, setSearchKeywords] = useState("");
+  const [clearItems, setClearItems] = useState(false);
   const [itemFilters, setItemFilters] = useState({
     keywords: null,
     pageNum: 1,
@@ -89,7 +89,12 @@ const ItemList = ({
     } else {
       targetArray.push(e.target.dataset.name);
     }
-    setItemFilters({ ...itemFilters, [filterName]: [...targetArray] });
+    setClearItems(true);
+    setItemFilters({
+      ...itemFilters,
+      [filterName]: [...targetArray],
+      pageNum: 1,
+    });
   };
 
   const removeFilter = (e) => {
@@ -102,7 +107,7 @@ const ItemList = ({
   };
 
   const onKeywordApply = () => {
-    setItemFilters({ ...itemFilters, keywords: searchKeywords });
+    setItemFilters({ ...itemFilters, keywords: searchKeywords, pageNum: 1 });
   };
 
   const onDelete = (e) => {
@@ -181,8 +186,8 @@ const ItemList = ({
   }, [currentItem]);
 
   useEffect(() => {
-    getItems(itemFilters);
-  }, [itemFilters]);
+    getItems(itemFilters, clearItems);
+  }, [itemFilters, clearItems]);
   useEffect(() => {
     if (error.id === "ITEM_ERROR") {
       setServerError({ msg: error.msg.msg });
@@ -234,9 +239,14 @@ const ItemList = ({
               { text: "Temple length:high to low", value: "templeLength desc" },
             ]}
             sortName="Sort By"
-            onClick={(e) =>
-              setItemFilters({ ...itemFilters, sortBy: e.currentTarget.name })
-            }
+            onClick={(e) => {
+              setClearItems(true);
+              setItemFilters({
+                ...itemFilters,
+                sortBy: e.currentTarget.name,
+                pageNum: 1,
+              });
+            }}
             selected={itemFilters.sortBy}
           />
         </Col>
@@ -254,9 +264,14 @@ const ItemList = ({
               { text: "48 items per page", value: 48 },
             ]}
             sortName={`${itemFilters.pageSize} Per Page`}
-            onClick={(e) =>
-              setItemFilters({ ...itemFilters, pageSize: e.currentTarget.name })
-            }
+            onClick={(e) => {
+              setClearItems(true);
+              setItemFilters({
+                ...itemFilters,
+                pageSize: e.currentTarget.name,
+                pageNum: 1,
+              });
+            }}
             selected={itemFilters.pageSize}
           />
         </Col>
@@ -270,17 +285,8 @@ const ItemList = ({
         </Col>
       </Row>
 
-      <Container
-        style={{ height: "50vh" }}
-        className={
-          (item.loading ? "d-flex" : "d-none") +
-          " justify-content-center align-items-center"
-        }
-      >
-        <Spinner color="success" style={{ height: "50px", width: "50px" }} />
-      </Container>
       <Container>
-        <TransitionGroup className="item-list d-flex flex-wrap justify-content-start">
+        <div className="item-list d-flex flex-wrap justify-content-start">
           {items
             ? items.map(
                 ({
@@ -299,102 +305,103 @@ const ItemList = ({
                   bridgeWidth,
                   templeLength,
                 }) => (
-                  <CSSTransition key={_id} timeout={500} classNames="fade">
-                    <Card className="item-card mt-4 mb-4 ml-2 mr-2 d-flex flex-column justify-content-around align-items-center p-2">
-                      {/* <CardImg
+                  <Card
+                    key={_id}
+                    className="item-card mt-4 mb-4 ml-2 mr-2 d-flex flex-column justify-content-around align-items-center p-2"
+                  >
+                    {/* <CardImg
                         top
                         width="100%"
                         height="40%"
                         src={imageURL}
                         alt="Item image"
                       /> */}
-                      <Container fluid className="p-0 flip-card">
-                        <div className="flip-card-inner">
-                          <div className="flip-card-front">
-                            {/* <img
+                    <Container fluid className="p-0 flip-card">
+                      <div className="flip-card-inner">
+                        <div className="flip-card-front">
+                          {/* <img
                               src={imageURL}
                               alt="Picture"
                               style={{ width: "100%", height: "100%" }}
                             /> */}
-                            <Image
-                              cloudName="rainforss"
-                              publicId={
-                                hasFront
-                                  ? `${name}AND${barcode}FRONT`
-                                  : "sample"
-                              }
-                              version={frontImageVersion}
-                            >
-                              <Placeholder type="pixelate" />
-                              <Transformation
-                                quality="auto"
-                                fetchFormat="auto"
-                                width={width < 410 ? "250" : "300"}
-                                height={width < 410 ? "170" : "200"}
-                                crop="scale"
-                              />
-                            </Image>
-                          </div>
-                          <div className="flip-card-back">
-                            <Image
-                              cloudName="rainforss"
-                              publicId={
-                                hasSide ? `${name}AND${barcode}SIDE` : "sample"
-                              }
-                              version={sideImageVersion}
-                            >
-                              <Transformation
-                                quality="auto"
-                                fetchFormat="auto"
-                                width={width < 410 ? "250" : "300"}
-                                height={width < 410 ? "170" : "200"}
-                                crop="scale"
-                              />
-                            </Image>
-                          </div>
+                          <Image
+                            cloudName="rainforss"
+                            loading="lazy"
+                            publicId={
+                              hasFront ? `${name}AND${barcode}FRONT` : "sample"
+                            }
+                            version={frontImageVersion}
+                          >
+                            <Placeholder type="pixelate" />
+                            <Transformation
+                              quality="auto"
+                              fetchFormat="auto"
+                              width={width < 410 ? "250" : "300"}
+                              height={width < 410 ? "170" : "200"}
+                              crop="scale"
+                            />
+                          </Image>
                         </div>
-                      </Container>
-                      <CardTitle className="text-center font-weight-bold">
-                        {name}
-                      </CardTitle>
-                      <CardSubtitle className="text-center">
-                        Dimension: {eyeSize}-{bridgeWidth}-{templeLength}
-                      </CardSubtitle>
-                      <CardSubtitle className="text-center">
-                        Color Group: {colorGroup}
-                      </CardSubtitle>
-                      <CardSubtitle className="text-center">
-                        Price: {price} CAD
-                      </CardSubtitle>
-                      <CardSubtitle className="text-center">
-                        Position: {row},{column}
-                      </CardSubtitle>
-                      {isAuthenticated ? (
-                        <Button
-                          className="remove-btn"
-                          color="danger"
-                          name={_id}
-                          onClick={onDelete}
-                        >
-                          Remove Item
-                        </Button>
-                      ) : (
-                        ""
-                      )}
+                        <div className="flip-card-back">
+                          <Image
+                            cloudName="rainforss"
+                            loading="lazy"
+                            publicId={
+                              hasSide ? `${name}AND${barcode}SIDE` : "sample"
+                            }
+                            version={sideImageVersion}
+                          >
+                            <Transformation
+                              quality="auto"
+                              fetchFormat="auto"
+                              width={width < 410 ? "250" : "300"}
+                              height={width < 410 ? "170" : "200"}
+                              crop="scale"
+                            />
+                          </Image>
+                        </div>
+                      </div>
+                    </Container>
+                    <CardTitle className="text-center font-weight-bold">
+                      {name}
+                    </CardTitle>
+                    <CardSubtitle className="text-center">
+                      Dimension: {eyeSize}-{bridgeWidth}-{templeLength}
+                    </CardSubtitle>
+                    <CardSubtitle className="text-center">
+                      Color Group: {colorGroup}
+                    </CardSubtitle>
+                    <CardSubtitle className="text-center">
+                      Price: {price} CAD
+                    </CardSubtitle>
+                    <CardSubtitle className="text-center">
+                      Position: {row},{column}
+                    </CardSubtitle>
+                    {isAuthenticated ? (
                       <Button
-                        className="update-btn"
-                        color="info"
+                        className="remove-btn"
+                        color="danger"
                         name={_id}
-                        onClick={onView}
+                        onClick={onDelete}
                       >
-                        View Details
+                        Remove Item
                       </Button>
-                    </Card>
-                  </CSSTransition>
+                    ) : (
+                      ""
+                    )}
+                    <Button
+                      className="update-btn"
+                      color="info"
+                      name={_id}
+                      onClick={onView}
+                    >
+                      View Details
+                    </Button>
+                  </Card>
                 )
               )
             : null}
-        </TransitionGroup>
+        </div>
         <ModifyModal
           modalOpen={modalOpen}
           toggle={toggle}
@@ -413,6 +420,32 @@ const ItemList = ({
           changeSearchValue={(e) => setColorSearchValue(e.target.value)}
         />
       </Container>
+      <Container
+        style={{ height: "50vh" }}
+        className={
+          (item.loading ? "d-flex" : "d-none") +
+          " justify-content-center align-items-center"
+        }
+      >
+        <Spinner color="success" style={{ height: "50px", width: "50px" }} />
+      </Container>
+      {item.loading ? null : (
+        <Footer
+          progressText={`Displaying ${items.length} items out of ${totalCount}`}
+          buttonText={
+            items.length === totalCount ? "End of the list" : "Load more items"
+          }
+          value={items.length}
+          max={totalCount}
+          onClick={() => {
+            setClearItems(false);
+            setItemFilters({
+              ...itemFilters,
+              pageNum: itemFilters.pageNum + 1,
+            });
+          }}
+        />
+      )}
     </>
   );
 };

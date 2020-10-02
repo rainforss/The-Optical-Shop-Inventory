@@ -34,16 +34,6 @@ const AppNavbar = ({ auth, logout }) => {
           <NavbarToggler onClick={toggle} />
           <Collapse isOpen={isOpen} navbar>
             <Nav className="ml-auto" navbar>
-              <NavItem>
-                <NavLink
-                  href="https://github.com/rainforss"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  GitHub
-                </NavLink>
-              </NavItem>
-
               <NavItem className={isAuthenticated ? "" : "d-none"}>
                 <Logout onClick={handleLogOut} />
               </NavItem>
@@ -60,7 +50,7 @@ const AppNavbar = ({ auth, logout }) => {
                 <LoginModal />
               </NavItem>
             </Nav>
-            <NavbarText className="ml-5">Powered by React</NavbarText>
+            <NavbarText className="ml-5">Management at ease</NavbarText>
           </Collapse>
         </Container>
       </Navbar>

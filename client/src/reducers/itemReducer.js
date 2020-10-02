@@ -4,6 +4,7 @@ const initialState = {
   items: [],
   loading: false,
   actionSuccess: null,
+  totalCount: null,
 };
 
 export default function (state = initialState, action) {
@@ -11,8 +12,9 @@ export default function (state = initialState, action) {
     case types.GET_ITEMS:
       return {
         ...state,
-        items: action.items,
+        items: [...state.items, ...action.items],
         loading: false,
+        totalCount: action.count,
       };
     case types.SEARCH_ITEMS:
       return {
@@ -58,11 +60,19 @@ export default function (state = initialState, action) {
         actionSuccess: null,
       };
     case types.ITEMS_LOADING:
-      return {
-        ...state,
-        loading: true,
-        items: [],
-      };
+      if (action.clear) {
+        return {
+          ...state,
+          loading: true,
+          items: [],
+        };
+      } else {
+        return {
+          ...state,
+          loading: true,
+          items: state.items,
+        };
+      }
     default:
       return state;
   }

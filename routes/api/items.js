@@ -85,7 +85,9 @@ router.get("/", async (req, res) => {
       .limit(parseInt(pageSize))
       .skip(parseInt(pageSize) * (parseInt(pageNum) - 1))
       .sort({ [sortName]: sequence });
-    res.json(items);
+    const count = await Item.countDocuments(filter);
+    const data = { items, count };
+    res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -144,6 +146,7 @@ router.post("/", verify, async (req, res) => {
       lastModifiedBy: req.user,
     });
     const savedItem = await newItem.save();
+
     res.json(savedItem);
   } catch (err) {
     res
