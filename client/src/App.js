@@ -10,6 +10,7 @@ import { Container } from "reactstrap";
 import { loadUser } from "./actions/authActions";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Head from "./components/common/Head";
 
 //Evaluated and no further optimization is worth implementing, deploy first production builld, need to implement 1. resend activation link, 2. Style the activation email.
 //3. Redirect to login page upon activation link is successful. 4. Notification bar using Toastify when actions (registration, login, item added, deleted, updated) are completed
@@ -20,6 +21,7 @@ function App() {
   return (
     <Provider store={store}>
       <div className="App">
+        <Head />
         <AppNavBar />
 
         <Container>
