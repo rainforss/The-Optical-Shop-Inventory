@@ -339,7 +339,7 @@ const ItemList = ({
                               fetchFormat="auto"
                               width={width < 410 ? "250" : "300"}
                               height={width < 410 ? "170" : "200"}
-                              crop="scale"
+                              crop="pad"
                             />
                           </Image>
                         </div>
@@ -357,7 +357,7 @@ const ItemList = ({
                               fetchFormat="auto"
                               width={width < 410 ? "250" : "300"}
                               height={width < 410 ? "170" : "200"}
-                              crop="scale"
+                              crop="pad"
                             />
                           </Image>
                         </div>
