@@ -69,6 +69,7 @@ export const deleteItem = (itemId, imgIds) => async (dispatch, getState) => {
 };
 
 export const addItem = (newItem, images) => async (dispatch, getState) => {
+  const specialChars = [`&`, `'`];
   try {
     if (images.front) {
       newItem.hasFront = true;
@@ -94,7 +95,14 @@ export const addItem = (newItem, images) => async (dispatch, getState) => {
       formData.append("file", images.front);
 
       formData.append("upload_preset", "opticalshop");
-      formData.append("public_id", `${newItem.name}AND${newItem.barcode}FRONT`);
+      formData.append(
+        "public_id",
+        specialChars.some((el) => newItem.name.includes(el))
+          ? `${encodeURIComponent(newItem.name)}AND${encodeURIComponent(
+              newItem.barcode
+            )}FRONT`
+          : `${newItem.name}AND${newItem.barcode}FRONT`
+      );
       formData.append("cloud_name", "rainforss");
       const front = await axios.post(
         "https://api.cloudinary.com/v1_1/rainforss/image/upload",
@@ -107,7 +115,14 @@ export const addItem = (newItem, images) => async (dispatch, getState) => {
       formData.append("file", images.side);
 
       formData.append("upload_preset", "opticalshop");
-      formData.append("public_id", `${newItem.name}AND${newItem.barcode}SIDE`);
+      formData.append(
+        "public_id",
+        specialChars.some((el) => newItem.name.includes(el))
+          ? `${encodeURIComponent(newItem.name)}AND${encodeURIComponent(
+              newItem.barcode
+            )}SIDE`
+          : `${newItem.name}AND${newItem.barcode}SIDE`
+      );
       formData.append("cloud_name", "rainforss");
       const side = await axios.post(
         "https://api.cloudinary.com/v1_1/rainforss/image/upload",
@@ -140,12 +155,17 @@ export const updateItem = (updatedItem, itemImage, itemId) => async (
   dispatch,
   getState
 ) => {
+  const specialChars = [`&`, `'`];
   try {
     //If new item image is attached, upload the new image to Cloudinary and notify the server to destroy old image
     if (itemImage.front) {
       //Get Cloudinary authentication string from the server and post image to Cloudinary
       const info = JSON.stringify({
-        public_id: `${updatedItem.name}AND${updatedItem.barcode}FRONT`,
+        public_id: specialChars.some((el) => updatedItem.name.includes(el))
+          ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
+              updatedItem.barcode
+            )}FRONT`
+          : `${updatedItem.name}AND${updatedItem.barcode}FRONT`,
       });
       const authenticate = await axios.post(
         "api/user/getsignature",
@@ -156,7 +176,11 @@ export const updateItem = (updatedItem, itemImage, itemId) => async (
       newFile.append("file", itemImage.front);
       newFile.append(
         "public_id",
-        `${updatedItem.name}AND${updatedItem.barcode}FRONT`
+        specialChars.some((el) => updatedItem.name.includes(el))
+          ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
+              updatedItem.barcode
+            )}FRONT`
+          : `${updatedItem.name}AND${updatedItem.barcode}FRONT`
       );
       newFile.append("api_key", "334344196228832");
       newFile.append("timestamp", authenticate.data.timestamp);
@@ -171,7 +195,11 @@ export const updateItem = (updatedItem, itemImage, itemId) => async (
 
     if (itemImage.side) {
       const info = JSON.stringify({
-        public_id: `${updatedItem.name}AND${updatedItem.barcode}SIDE`,
+        public_id: specialChars.some((el) => updatedItem.name.includes(el))
+          ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
+              updatedItem.barcode
+            )}SIDE`
+          : `${updatedItem.name}AND${updatedItem.barcode}SIDE`,
       });
       const authenticate = await axios.post(
         "api/user/getsignature",
@@ -182,7 +210,11 @@ export const updateItem = (updatedItem, itemImage, itemId) => async (
       newFile.append("file", itemImage.side);
       newFile.append(
         "public_id",
-        `${updatedItem.name}AND${updatedItem.barcode}SIDE`
+        specialChars.some((el) => updatedItem.name.includes(el))
+          ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
+              updatedItem.barcode
+            )}SIDE`
+          : `${updatedItem.name}AND${updatedItem.barcode}SIDE`
       );
       newFile.append("api_key", "334344196228832");
       newFile.append("timestamp", authenticate.data.timestamp);

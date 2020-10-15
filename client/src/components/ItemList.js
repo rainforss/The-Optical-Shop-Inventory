@@ -65,6 +65,8 @@ const ItemList = ({
     sortBy: null,
   });
 
+  const specialChars = ["&", `'`];
+
   const toggleColorDropDown = () => {
     setColorDropDownOpen(!colorDropDownOpen);
   };
@@ -115,10 +117,18 @@ const ItemList = ({
     const itemInfo = items.find((item) => item._id === id);
     const imgIds = {};
     if (itemInfo.hasFront) {
-      imgIds.front = `${itemInfo.name}AND${itemInfo.barcode}FRONT`;
+      imgIds.front = specialChars.some((el) => itemInfo.name.includes(el))
+        ? `${encodeURIComponent(itemInfo.name)}AND${encodeURIComponent(
+            itemInfo.barcode
+          )}FRONT`
+        : `${itemInfo.name}AND${itemInfo.barcode}FRONT`;
     }
     if (itemInfo.hasSide) {
-      imgIds.side = `${itemInfo.name}AND${itemInfo.barcode}SIDE`;
+      imgIds.side = specialChars.some((el) => itemInfo.name.includes(el))
+        ? `${encodeURIComponent(itemInfo.name)}AND${encodeURIComponent(
+            itemInfo.barcode
+          )}SIDE`
+        : `${itemInfo.name}AND${itemInfo.barcode}SIDE`;
     }
     deleteItem(id, imgIds);
   };
@@ -329,7 +339,17 @@ const ItemList = ({
                             cloudName="rainforss"
                             loading="lazy"
                             publicId={
-                              hasFront ? `${name}AND${barcode}FRONT` : "sample"
+                              hasFront
+                                ? specialChars.some((el) => name.includes(el))
+                                  ? `${encodeURIComponent(
+                                      encodeURIComponent(name)
+                                    )}AND${encodeURIComponent(
+                                      encodeURIComponent(barcode)
+                                    )}FRONT`
+                                  : `${encodeURIComponent(
+                                      name
+                                    )}AND${encodeURIComponent(barcode)}FRONT`
+                                : "sample"
                             }
                             version={frontImageVersion}
                           >
@@ -348,7 +368,17 @@ const ItemList = ({
                             cloudName="rainforss"
                             loading="lazy"
                             publicId={
-                              hasSide ? `${name}AND${barcode}SIDE` : "sample"
+                              hasSide
+                                ? specialChars.some((el) => name.includes(el))
+                                  ? `${encodeURIComponent(
+                                      encodeURIComponent(name)
+                                    )}AND${encodeURIComponent(
+                                      encodeURIComponent(barcode)
+                                    )}SIDE`
+                                  : `${encodeURIComponent(
+                                      name
+                                    )}AND${encodeURIComponent(barcode)}SIDE`
+                                : "sample"
                             }
                             version={sideImageVersion}
                           >
