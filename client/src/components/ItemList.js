@@ -110,6 +110,7 @@ const ItemList = ({
 
   const onKeywordApply = () => {
     setItemFilters({ ...itemFilters, keywords: searchKeywords, pageNum: 1 });
+    setClearItems(true);
   };
 
   const onDelete = (e) => {

@@ -12,7 +12,7 @@ export default function (state = initialState, action) {
     case types.GET_ITEMS:
       return {
         ...state,
-        items: [...action.items],
+        items: [...state.items, ...action.items],
         loading: false,
         totalCount: action.count,
       };
