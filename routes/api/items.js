@@ -270,10 +270,10 @@ router.put("/:id", verify, async (req, res) => {
 //@desc Delete an item and its image if image is not default (on Cloudinary)
 //@access Private
 
-router.post("/:id", verify, async (req, res) => {
+router.delete("/:id", verify, async (req, res) => {
   try {
     //If image deleted successfully or no image, then remove the item from database
-    const { front, side } = req.body;
+    const { front, side } = req.query;
     if (front) {
       cloudinary.uploader.destroy(front);
     }

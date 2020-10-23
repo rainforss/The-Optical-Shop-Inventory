@@ -51,12 +51,11 @@ export const getItems = (query, clear) => async (dispatch) => {
 
 export const deleteItem = (itemId, imgIds) => async (dispatch, getState) => {
   try {
-    const body = JSON.stringify(imgIds);
-    const res = await axios.post(
-      `/api/items/${itemId}`,
-      body,
-      tokenConfiguration(getState)
-    );
+    const imageIds = { ...imgIds };
+    const res = await axios.delete(`/api/items/${itemId}`, {
+      params: imageIds,
+      ...tokenConfiguration(getState),
+    });
     dispatch({
       type: types.DELETE_ITEM,
       itemId: itemId,
