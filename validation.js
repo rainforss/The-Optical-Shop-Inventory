@@ -39,12 +39,12 @@ module.exports = {
       hasNosePads: joi.string().alphanum().required(),
       barcode: joi.string().required().min(6),
       row: joi.number().integer().positive().max(100).required().messages({
-        "string.positive": `Row number must be 1 - 100`,
-        "string.max": `Row number must be 1 - 100`,
+        "number.positive": `Row number must be 1 - 100`,
+        "number.max": `Row number must be 1 - 100`,
       }),
       column: joi.number().integer().positive().max(100).required().messages({
-        "string.positive": `Column number must be 1 - 100`,
-        "string.max": `Column number must be 1 - 100`,
+        "number.positive": `Column number must be 1 - 100`,
+        "number.max": `Column number must be 1 - 100`,
       }),
       price: joi.number().positive().max(2000).required(),
       itemType: joi.string().alphanum().required(),
@@ -53,6 +53,15 @@ module.exports = {
       hasSide: joi.bool(),
       frontImageVersion: joi.number(),
       sideImageVersion: joi.number(),
+    });
+    return schema.validate(data);
+  },
+  frameShapeValidation: (data) => {
+    const pattern = /^[a-zA-Z\s]*$/;
+    const schema = joi.object({
+      name: joi.string().pattern(pattern, "name").min(6).required().messages({
+        "string.pattern.name": `Name can only contain letters or spaces`,
+      }),
     });
     return schema.validate(data);
   },

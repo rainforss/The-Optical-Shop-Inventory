@@ -5,6 +5,7 @@ const path = require("path");
 const connectDB = require("./config/db");
 const authRoute = require("./routes/api/auth");
 const itemRoute = require("./routes/api/items");
+const frameSpecsRoute = require("./routes/api/frameSpecs");
 
 //Load configurations
 dotenv.config({ path: "./config/config.env" });
@@ -18,6 +19,7 @@ app.use(express.json());
 //Route middlewares
 app.use("/api/user", authRoute);
 app.use("/api/items", itemRoute);
+app.use("/api/framespecs", frameSpecsRoute);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
