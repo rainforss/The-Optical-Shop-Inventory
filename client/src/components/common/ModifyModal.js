@@ -31,6 +31,7 @@ const ModifyModal = ({
   toggleColorDropDown,
   changeSearchValue,
   onColorSelect,
+  frameShapes,
 }) => {
   return (
     <div>
@@ -114,17 +115,13 @@ const ModifyModal = ({
               ]}
               disabled={!isAuthenticated}
             />
-            <RadioInput
+            <SelectInput
               name="frameShape"
-              legend="Frame Shape"
+              label="Frame Shape"
+              id="frameShape"
               onChange={onChange}
-              selected={currentItem.frameShape}
-              options={[
-                { text: "Circle", value: "circle" },
-                { text: "R-edge", value: "roundEdges" },
-                { text: "Rect", value: "rectangular" },
-                { text: "Irregular", value: "irregular" },
-              ]}
+              value={currentItem.frameShape}
+              options={frameShapes}
               disabled={!isAuthenticated}
             />
             <RadioInput
@@ -226,7 +223,10 @@ const ModifyModal = ({
               id="inStock"
               value={currentItem.inStock ? "YES" : "NO"}
               onChange={onChange}
-              options={["YES", "NO"]}
+              options={[
+                { text: "YES", value: "YES" },
+                { text: "NO", value: "NO" },
+              ]}
               disabled={!isAuthenticated}
             />
             <SelectInput
@@ -235,7 +235,10 @@ const ModifyModal = ({
               id="itemType"
               value={currentItem.itemType}
               onChange={onChange}
-              options={["Sunglasses", "Eyeglasses"]}
+              options={[
+                { text: "Sunglasses", value: "Sunglasses" },
+                { text: "Eyeglasses", value: "Eyeglasses" },
+              ]}
               disabled={!isAuthenticated}
             />
 

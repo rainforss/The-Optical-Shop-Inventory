@@ -1,7 +1,15 @@
 import React from "react";
 import { FormGroup, Label, Input } from "reactstrap";
 
-const SelectInput = ({ label, name, id, onChange, options, disabled }) => {
+const SelectInput = ({
+  label,
+  name,
+  id,
+  onChange,
+  options,
+  disabled,
+  value,
+}) => {
   return (
     <FormGroup disabled={disabled}>
       <Label for={id}>{label}</Label>
@@ -10,12 +18,12 @@ const SelectInput = ({ label, name, id, onChange, options, disabled }) => {
         name={name}
         id={id}
         onChange={onChange}
-        defaultValue={options[0]}
+        value={value}
         disabled={disabled}
       >
         {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
+          <option key={option.text} value={option.value}>
+            {option.text}
           </option>
         ))}
       </Input>

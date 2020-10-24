@@ -149,6 +149,7 @@ export const NamedColors = [
   { name: "Linen", hex: "#FAF0E6", group: "white" },
   { name: "Lavender Blush", hex: "#FFFFFF", group: "white" },
   { name: "Misty Rose", hex: "#FFE4E1", group: "white" },
+  { name: "Clear", hex: "transparent", group: "clear" },
 
   //Grey Colors
   { name: "Gainsboro", hex: "#DCDCDC", group: "grey" },

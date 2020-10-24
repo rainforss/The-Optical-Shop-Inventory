@@ -10,6 +10,7 @@ const Filter = ({
   applyFilter,
   filterInfo,
   removeFilter,
+  spec,
 }) => {
   return (
     <>
@@ -101,12 +102,7 @@ const Filter = ({
           name="frameShape"
           id="frameShape"
           label="Frame Shape"
-          options={[
-            { text: "Circle", value: "circle" },
-            { text: "R-edge", value: "roundEdges" },
-            { text: "Rect", value: "rectangular" },
-            { text: "Irregular", value: "irregular" },
-          ]}
+          options={spec.frameShapes}
           onChange={onChange}
           selected={filterInfo.frameShape}
         />

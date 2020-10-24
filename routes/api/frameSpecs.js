@@ -3,10 +3,11 @@ const verify = require("../../utilities/verifyToken");
 const FrameShape = require("../../model/frameShape");
 const validate = require("../../validation");
 const format = require("../../utilities/formatter");
+const Item = require("../../model/item");
 
 router.get("/frameshapes", async (req, res) => {
   try {
-    const frameShapes = await FrameShape.find({}).sort({ name: "asc" });
+    const frameShapes = await FrameShape.find({}).sort({ text: "asc" });
     res.status(200).json(frameShapes);
   } catch (err) {
     res.status(500).json({
@@ -24,7 +25,7 @@ router.post("/frameshapes", verify, format, async (req, res) => {
 
   try {
     const typeWithSameName = await FrameShape.findOne({
-      name: req.body.name,
+      value: req.body.value,
     });
     if (typeWithSameName) {
       return res.status(400).json({
@@ -33,7 +34,8 @@ router.post("/frameshapes", verify, format, async (req, res) => {
       });
     }
     const newType = new FrameShape({
-      name: req.body.name,
+      text: req.body.text,
+      value: req.body.value,
     });
     const savedFrameShape = await newType.save();
     res.json(savedFrameShape);
@@ -53,7 +55,7 @@ router.put("/frameshapes/:id", verify, format, async (req, res) => {
   try {
     const typeWithSameName = await FrameShape.findOne({
       _id: { $ne: req.params.id },
-      name: req.body.name,
+      value: req.body.value,
     });
     if (typeWithSameName) {
       return res.status(400).json({
@@ -61,9 +63,17 @@ router.put("/frameshapes/:id", verify, format, async (req, res) => {
         msg: "Frame type with same name already exists in the system",
       });
     }
-    const modifiedType = await FrameShape.findByIdAndUpdate(req.params.id, {
-      name: req.body.name,
-    });
+
+    const toBeModified = await FrameShape.findById(req.params.id);
+    const updateResult = await Item.updateMany(
+      { frameShape: toBeModified.value },
+      { frameShape: req.body.value }
+    );
+    const modifiedType = await FrameShape.findByIdAndUpdate(
+      req.params.id,
+      { value: req.body.value, text: req.body.text },
+      { new: true }
+    );
     res.json(modifiedType);
   } catch (err) {
     res.status(500).json({
@@ -75,8 +85,19 @@ router.put("/frameshapes/:id", verify, format, async (req, res) => {
 
 router.delete("/frameshapes/:id", verify, async (req, res) => {
   try {
-    const deleteResult = await FrameShape.findByIdAndRemove(req.params.id);
-    res.json(deleteResult);
+    const toBeDeleted = await FrameShape.findById(req.params.id);
+    const itemWithThisShape = await Item.findOne({
+      frameShape: toBeDeleted.value,
+    });
+    if (itemWithThisShape) {
+      return res.status(400).json({
+        success: false,
+        msg: `Cannot delete ${toBeDeleted.text} since there are inventory items with this shape`,
+      });
+    } else {
+      const deleteResult = await toBeDeleted.remove();
+      res.json(deleteResult);
+    }
   } catch (err) {
     res.status(500).json({
       success: false,

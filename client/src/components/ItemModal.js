@@ -12,6 +12,7 @@ import {
 
 import { connect } from "react-redux";
 import { addItem, resetStatus } from "../actions/itemActions";
+import { getShapes } from "../actions/specActions";
 import { clearErrors } from "../actions/errorActions";
 import TextInput from "./common/TextInput";
 import RadioInput from "./common/RadioInput";
@@ -27,6 +28,8 @@ const ItemModal = ({
   item,
   clearErrors,
   resetStatus,
+  getShapes,
+  spec,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [itemInfo, setItemInfo] = useState({
@@ -249,6 +252,10 @@ const ItemModal = ({
   }, [itemInfo]);
 
   useEffect(() => {
+    getShapes();
+  }, []);
+
+  useEffect(() => {
     if (error.id === "ITEM_ERROR") {
       setServerError({ msg: error.msg.msg });
     } else {
@@ -262,6 +269,8 @@ const ItemModal = ({
       }
     }
   }, [error, item.actionSuccess, modalOpen]);
+
+  console.log(spec.frameShapes);
 
   return (
     <>
@@ -341,17 +350,13 @@ const ItemModal = ({
                 { text: "Composite", value: "composite" },
               ]}
             />
-            <RadioInput
+            <SelectInput
               name="frameShape"
-              legend="Frame Shape"
+              label="Frame Shape"
+              id="frameShape"
               onChange={onChange}
-              selected={itemInfo.frameShape}
-              options={[
-                { text: "Circle", value: "circle" },
-                { text: "R-edge", value: "roundEdges" },
-                { text: "Rect", value: "rectangular" },
-                { text: "Irregular", value: "irregular" },
-              ]}
+              value={itemInfo.frameShape}
+              options={spec.frameShapes}
             />
             <RadioInput
               name="frameType"
@@ -450,7 +455,10 @@ const ItemModal = ({
               id="inStock"
               value={itemInfo.inStock}
               onChange={onChange}
-              options={["YES", "NO"]}
+              options={[
+                { text: "YES", value: "YES" },
+                { text: "NO", value: "NO" },
+              ]}
             />
             <SelectInput
               label="Eyewear Type"
@@ -458,7 +466,10 @@ const ItemModal = ({
               id="itemType"
               value={itemInfo.itemType}
               onChange={onChange}
-              options={["Sunglasses", "Eyeglasses"]}
+              options={[
+                { text: "Sunglasses", value: "Sunglasses" },
+                { text: "Eyeglasses", value: "Eyeglasses" },
+              ]}
             />
             <TextInput
               label="Upload Front View"
@@ -507,6 +518,7 @@ const mapStateToProps = (state) => ({
   item: state.item,
   isAuthenticated: state.auth.isAuthenticated,
   error: state.error,
+  spec: state.spec,
 });
 
 ItemModal.propTypes = {
@@ -520,4 +532,5 @@ export default connect(mapStateToProps, {
   addItem,
   clearErrors,
   resetStatus,
+  getShapes,
 })(React.memo(ItemModal));

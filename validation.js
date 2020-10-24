@@ -17,6 +17,7 @@ module.exports = {
     return schema.validate(data);
   },
   itemValidation: (data) => {
+    const pattern = /^[a-zA-Z\s]*$/;
     const schema = joi.object({
       name: joi.string().min(6).required(),
       eyeSize: joi.string().alphanum().length(2).required().messages({
@@ -31,7 +32,14 @@ module.exports = {
         "string.length": `Temple length must be three digits`,
       }),
       material: joi.string().alphanum().required(),
-      frameShape: joi.string().alphanum().required(),
+      frameShape: joi
+        .string()
+        .pattern(pattern, "shape")
+        .min(6)
+        .required()
+        .messages({
+          "string.pattern.name": `Frameshape can only contain letters or spaces`,
+        }),
       frameType: joi.string().alphanum().required(),
       frameColor: joi.string().min(7).required(),
       colorGroup: joi.string().alphanum().required(),
@@ -59,8 +67,11 @@ module.exports = {
   frameShapeValidation: (data) => {
     const pattern = /^[a-zA-Z\s]*$/;
     const schema = joi.object({
-      name: joi.string().pattern(pattern, "name").min(6).required().messages({
+      text: joi.string().pattern(pattern, "text").min(6).required().messages({
         "string.pattern.name": `Name can only contain letters or spaces`,
+      }),
+      value: joi.string().pattern(pattern, "value").min(6).required().messages({
+        "string.pattern.name": `Value can only contain letters or spaces`,
       }),
     });
     return schema.validate(data);

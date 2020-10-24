@@ -33,9 +33,9 @@ const CheckBoxInput = ({ label, name, id, onChange, options, selected }) => {
         <DropdownToggle caret block color="info">
           {label}
         </DropdownToggle>
-        <DropdownMenu className="w-100">
+        <DropdownMenu className="w-100 filter-dropdowns">
           {options.map((option) => (
-            <div key={option.value} className="px-5 mx-auto py-2 checkbox">
+            <div key={option.text} className="px-5 mx-auto py-2 checkbox">
               <FormGroup check>
                 <Label className="w-100" check>
                   <Input

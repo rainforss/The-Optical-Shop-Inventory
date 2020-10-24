@@ -2,7 +2,12 @@ const mongoose = require("mongoose");
 
 const frameShapeSchema = new mongoose.Schema(
   {
-    name: {
+    text: {
+      type: String,
+      required: true,
+      min: 6,
+    },
+    value: {
       type: String,
       required: true,
       min: 6,

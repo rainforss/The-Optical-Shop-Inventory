@@ -85,6 +85,11 @@
   background-color: cornflowerblue;
 }
 
+.filter-dropdowns {
+  max-height: 40vh;
+  overflow-y: scroll;
+}
+
 @media screen and (max-width: 1200px) {
   .item-card {
     width: 320px;

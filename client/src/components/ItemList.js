@@ -18,6 +18,7 @@ import {
   updateItem,
   resetStatus,
 } from "../actions/itemActions";
+import { getShapes } from "../actions/specActions";
 import { clearErrors } from "../actions/errorActions";
 import PropTypes from "prop-types";
 import ModifyModal from "./common/ModifyModal";
@@ -37,6 +38,8 @@ const ItemList = ({
   resetStatus,
   error,
   clearErrors,
+  spec,
+  getShapes,
 }) => {
   const { items, totalCount } = item;
   const { height, width } = useWindowDimensions();
@@ -50,7 +53,7 @@ const ItemList = ({
   const [colorSearchValue, setColorSearchValue] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [searchKeywords, setSearchKeywords] = useState("");
-  const [clearItems, setClearItems] = useState(false);
+  const [clearItems, setClearItems] = useState(true);
   const [itemFilters, setItemFilters] = useState({
     keywords: null,
     pageNum: 1,
@@ -193,6 +196,10 @@ const ItemList = ({
   };
 
   useEffect(() => {
+    getShapes();
+  }, []);
+
+  useEffect(() => {
     validate(currentItem, setInputErrors).realTime(inputModified);
   }, [currentItem]);
 
@@ -231,6 +238,7 @@ const ItemList = ({
             onChange={onFilterSelect}
             filterInfo={itemFilters}
             removeFilter={removeFilter}
+            spec={spec}
             applyFilter={() => {
               setFilterOpen(!filterOpen);
             }}
@@ -450,6 +458,7 @@ const ItemList = ({
           colorSearchValue={colorSearchValue}
           onColorSelect={onColorSelect}
           changeSearchValue={(e) => setColorSearchValue(e.target.value)}
+          frameShapes={spec.frameShapes}
         />
       </Container>
       <Container
@@ -496,6 +505,7 @@ const mapStateToProps = (state) => ({
   error: state.error,
   item: state.item,
   isAuthenticated: state.auth.isAuthenticated,
+  spec: state.spec,
 });
 
 export default connect(mapStateToProps, {
@@ -504,4 +514,5 @@ export default connect(mapStateToProps, {
   updateItem,
   resetStatus,
   clearErrors,
+  getShapes,
 })(ItemList);

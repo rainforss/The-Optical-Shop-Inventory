@@ -106,5 +106,34 @@ export default function validate(itemInfo, setErrors) {
 
       return errorNumber === 0;
     },
+    Shape: () => {
+      const regex = RegExp("^[a-zA-Z ]*$");
+      const errors = {};
+      let errorNumbers = 0;
+      if (itemInfo.value.trim().length < 6) {
+        errors.value = "Frame shape name must contain at least 6 characters";
+        errorNumbers++;
+      }
+      if (!regex.test(itemInfo.value)) {
+        errors.value = "Frame shape name can only contain letters or spaces";
+        errorNumbers++;
+      }
+
+      setErrors(errors);
+      return errorNumbers === 0;
+    },
+    ShapeRealTime: (inputModified) => {
+      const regex = RegExp("^[a-zA-Z ]*$");
+      const errors = {};
+      if (inputModified.value && itemInfo.value.trim().length < 6) {
+        errors.value = "Frame shape name must contain at least 6 characters";
+      } else if (inputModified.value && !regex.test(itemInfo.value)) {
+        errors.value = "Frame shape name can only contain letters or spaces";
+      } else {
+        errors.value = "";
+      }
+
+      setErrors(errors);
+    },
   };
 }

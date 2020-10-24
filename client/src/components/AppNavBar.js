@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Collapse,
   Navbar,
   NavbarToggler,
   NavbarBrand,
   Nav,
-  NavItem,
   NavLink,
+  NavItem,
   Container,
   NavbarText,
 } from "reactstrap";
@@ -42,7 +43,27 @@ const AppNavbar = ({ auth, logout }) => {
                   <strong>{user ? `Welcome, ${user.name}` : ""}</strong>
                 </span>
               </NavItem>
-
+              <NavItem>
+                <NavLink>
+                  <Link
+                    style={{ textDecoration: "none", color: "white" }}
+                    exact
+                    to="/"
+                  >
+                    Items
+                  </Link>
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink>
+                  <Link
+                    style={{ textDecoration: "none", color: "white" }}
+                    to="/specs"
+                  >
+                    Specs
+                  </Link>
+                </NavLink>
+              </NavItem>
               <NavItem className={isAuthenticated ? "d-none" : ""}>
                 <RegisterModal />
               </NavItem>
