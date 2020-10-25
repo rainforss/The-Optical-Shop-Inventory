@@ -347,6 +347,7 @@ const ItemList = ({
                           <Image
                             cloudName="rainforss"
                             loading="lazy"
+                            accessibility="brightmode"
                             publicId={
                               hasFront
                                 ? specialChars.some((el) => name.includes(el))
@@ -376,6 +377,7 @@ const ItemList = ({
                           <Image
                             cloudName="rainforss"
                             loading="lazy"
+                            accessibility="brightmode"
                             publicId={
                               hasSide
                                 ? specialChars.some((el) => name.includes(el))
