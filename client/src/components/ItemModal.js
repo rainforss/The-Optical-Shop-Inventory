@@ -348,6 +348,7 @@ const ItemModal = ({
                 { text: "Metal", value: "metal" },
                 { text: "Acetate", value: "acetate" },
                 { text: "Composite", value: "composite" },
+                { text: "Titanium", value: "titanium" },
               ]}
             />
             <SelectInput

@@ -4,6 +4,7 @@ const Item = require("../../model/item");
 const validate = require("../../validation");
 const cloudinary = require("cloudinary").v2;
 const dotenv = require("dotenv");
+const { db } = require("../../model/item");
 
 dotenv.config({ path: "./config/config.env" });
 
@@ -81,12 +82,13 @@ router.get("/", async (req, res) => {
     });
   }
   try {
-    const items = await Item.find(filter)
+    const items = Item.find(filter)
+      .sort({ [sortName]: sequence, row: -1, column: 1 })
       .limit(parseInt(pageSize))
-      .skip(parseInt(pageSize) * (parseInt(pageNum) - 1))
-      .sort({ [sortName]: sequence });
-    const count = await Item.countDocuments(filter);
-    const data = { items, count };
+      .skip(parseInt(pageSize) * (parseInt(pageNum) - 1));
+    const count = Item.countDocuments(filter);
+    const results = await Promise.all([items, count]);
+    const data = { items: results[0], count: results[1] };
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
@@ -125,9 +127,9 @@ router.post("/", verify, async (req, res) => {
       });
     const newItem = new Item({
       name: req.body.name,
-      eyeSize: req.body.eyeSize,
-      bridgeWidth: req.body.bridgeWidth,
-      templeLength: req.body.templeLength,
+      eyeSize: parseInt(req.body.eyeSize),
+      bridgeWidth: parseInt(req.body.bridgeWidth),
+      templeLength: parseInt(req.body.templeLength),
       material: req.body.material,
       frameShape: req.body.frameShape,
       frameType: req.body.frameType,
@@ -136,9 +138,9 @@ router.post("/", verify, async (req, res) => {
       hingeType: req.body.hingeType,
       hasNosePads: req.body.hasNosePads,
       barcode: req.body.barcode,
-      row: req.body.row,
-      column: req.body.column,
-      price: req.body.price,
+      row: parseInt(req.body.row),
+      column: parseInt(req.body.column),
+      price: parseInt(req.body.price),
       itemType: req.body.itemType,
       inStock: req.body.inStock,
       hasFront: req.body.hasFront,
@@ -226,9 +228,9 @@ router.put("/:id", verify, async (req, res) => {
     //Then find the original item and construct the new item object
     const toBeUpdated = await Item.findById(req.params.id);
     toBeUpdated.name = updatedItem.name;
-    toBeUpdated.eyeSize = updatedItem.eyeSize;
-    toBeUpdated.bridgeWidth = updatedItem.bridgeWidth;
-    toBeUpdated.templeLength = updatedItem.templeLength;
+    toBeUpdated.eyeSize = parseInt(updatedItem.eyeSize);
+    toBeUpdated.bridgeWidth = parseInt(updatedItem.bridgeWidth);
+    toBeUpdated.templeLength = parseInt(updatedItem.templeLength);
     toBeUpdated.material = updatedItem.material;
     toBeUpdated.frameShape = updatedItem.frameShape;
     toBeUpdated.frameType = updatedItem.frameType;
@@ -237,9 +239,9 @@ router.put("/:id", verify, async (req, res) => {
     toBeUpdated.hingeType = updatedItem.hingeType;
     toBeUpdated.hasNosePads = updatedItem.hasNosePads;
     toBeUpdated.barcode = updatedItem.barcode;
-    toBeUpdated.price = updatedItem.price;
-    toBeUpdated.row = updatedItem.row;
-    toBeUpdated.column = updatedItem.column;
+    toBeUpdated.price = parseInt(updatedItem.price);
+    toBeUpdated.row = parseInt(updatedItem.row);
+    toBeUpdated.column = parseInt(updatedItem.column);
     toBeUpdated.inStock = updatedItem.inStock;
     toBeUpdated.itemType = updatedItem.itemType;
     toBeUpdated.lastModifiedBy = req.user;

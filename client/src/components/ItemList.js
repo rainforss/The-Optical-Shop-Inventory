@@ -57,7 +57,7 @@ const ItemList = ({
   const [itemFilters, setItemFilters] = useState({
     keywords: null,
     pageNum: 1,
-    pageSize: 6,
+    pageSize: 48,
     colorGroup: [],
     material: [],
     frameShape: [],

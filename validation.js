@@ -20,17 +20,26 @@ module.exports = {
     const pattern = /^[a-zA-Z\s]*$/;
     const schema = joi.object({
       name: joi.string().min(6).required(),
-      eyeSize: joi.string().alphanum().length(2).required().messages({
-        "string.empty": `Eye size cannot be an empty field`,
-        "string.length": `Eye size should be 2 digits`,
+      eyeSize: joi.number().integer().max(99).min(30).required().messages({
+        "number.empty": `Eye size cannot be an empty field`,
+        "number.max": "Eye size cannot be greater than 99",
+        "number.min": `Eye size cannot be smaller than 30`,
       }),
-      bridgeWidth: joi.string().alphanum().min(1).max(2).required().messages({
-        "string.min": `Bridge width must be one or two digits`,
-        "string.max": `Bridge width must be one or two digits`,
+      bridgeWidth: joi.number().integer().max(50).min(5).required().messages({
+        "number.min": `Bridge width cannot be smaller than 5`,
+        "number.max": `Bridge width cannot be greater than 50`,
       }),
-      templeLength: joi.string().alphanum().length(3).required().messages({
-        "string.length": `Temple length must be three digits`,
-      }),
+      templeLength: joi
+        .number()
+        .integer()
+        .max(199)
+        .min(99)
+        .required()
+        .required()
+        .messages({
+          "number.min": `Temple length cannot be smaller than 99`,
+          "number.max": "Temple length cannot be greater than 199",
+        }),
       material: joi.string().alphanum().required(),
       frameShape: joi
         .string()

@@ -47,7 +47,6 @@ const AppNavbar = ({ auth, logout }) => {
                 <NavLink>
                   <Link
                     style={{ textDecoration: "none", color: "white" }}
-                    exact
                     to="/"
                   >
                     Items

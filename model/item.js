@@ -22,15 +22,15 @@ const ItemSchema = new mongoose.Schema(
       required: true,
     },
     eyeSize: {
-      type: String,
+      type: Number,
       required: true,
     },
     bridgeWidth: {
-      type: String,
+      type: Number,
       default: "",
     },
     templeLength: {
-      type: String,
+      type: Number,
       default: "",
     },
     material: {
@@ -55,15 +55,15 @@ const ItemSchema = new mongoose.Schema(
     },
 
     row: {
-      type: String,
+      type: Number,
       required: true,
     },
     column: {
-      type: String,
+      type: Number,
       required: true,
     },
     price: {
-      type: String,
+      type: Number,
       required: true,
     },
     itemType: {
