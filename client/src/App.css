@@ -15,6 +15,11 @@
   transition: opacity 1s ease-in;
 } */
 
+.banner-image {
+  width: 100%;
+  object-fit: scale-down;
+}
+
 .item-card {
   height: 550px;
   width: 320px;

@@ -270,8 +270,6 @@ const ItemModal = ({
     }
   }, [error, item.actionSuccess, modalOpen]);
 
-  console.log(spec.frameShapes);
-
   return (
     <>
       {isAuthenticated ? (
