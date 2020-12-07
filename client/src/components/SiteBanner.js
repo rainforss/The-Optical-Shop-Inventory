@@ -28,6 +28,12 @@ export default function SiteBanner() {
       altText: "",
       caption: "",
     },
+    {
+      src:
+        "https://res.cloudinary.com/rainforss/image/upload/v1607374507/Banners/Slide6_jy6vas.jpg",
+      altText: "",
+      caption: "",
+    },
   ];
   const [activeIndex, setActiveIndex] = useState(0);
   const [animating, setAnimating] = useState(false);

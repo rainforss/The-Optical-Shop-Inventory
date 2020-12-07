@@ -70,7 +70,17 @@ const AppNavbar = ({ auth, logout }) => {
                 <LoginModal />
               </NavItem>
             </Nav>
-            <NavbarText className="ml-5">Management at ease</NavbarText>
+            <NavbarText className="ml-5">
+              <strong>
+                <a
+                  href="https://theopticalshop.appointy.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Book an Appointment
+                </a>
+              </strong>
+            </NavbarText>
           </Collapse>
         </Container>
       </Navbar>
