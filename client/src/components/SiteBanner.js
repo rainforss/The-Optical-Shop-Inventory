@@ -56,7 +56,12 @@ export default function SiteBanner() {
   };
   return (
     <Container className="pt-2 pb-5">
-      <Carousel activeIndex={activeIndex} next={next} previous={previous}>
+      <Carousel
+        activeIndex={activeIndex}
+        next={next}
+        previous={previous}
+        interval={7000}
+      >
         <CarouselIndicators
           items={items}
           activeIndex={activeIndex}

@@ -70,6 +70,8 @@ module.exports = {
       hasSide: joi.bool(),
       frontImageVersion: joi.number(),
       sideImageVersion: joi.number(),
+      frontImageURL: joi.string(),
+      sideImageURL: joi.string(),
     });
     return schema.validate(data);
   },

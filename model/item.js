@@ -92,6 +92,14 @@ const ItemSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    frontImageURL: {
+      type: String,
+      default: "",
+    },
+    sideImageURL: {
+      type: String,
+      default: "",
+    },
     lastModifiedBy: {
       type: String,
       required: true,

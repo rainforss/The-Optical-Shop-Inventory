@@ -82,6 +82,35 @@ router.get("/", async (req, res) => {
     });
   }
   try {
+    /* USED TO INTEGRATE WITH SHOPIFY */
+    // const specialChars = ["&", `'`];
+    // const rootURL = "https://res.cloudinary.com/rainforss/image/upload/";
+    // const all = await Item.find();
+    // await all.forEach(async (item) => {
+    //   item.frontImageURL = item.hasFront
+    //     ? specialChars.some((el) => item.name.includes(el))
+    //       ? `${encodeURIComponent(
+    //           encodeURIComponent(item.name)
+    //         )}AND${encodeURIComponent(encodeURIComponent(item.barcode))}FRONT`
+    //       : `${encodeURIComponent(item.name)}AND${encodeURIComponent(
+    //           item.barcode
+    //         )}FRONT`
+    //     : "sample";
+    //   item.frontImageURL =
+    //     rootURL + "v" + item.frontImageVersion + "/" + item.frontImageURL;
+    //   item.sideImageURL = item.hasFront
+    //     ? specialChars.some((el) => item.name.includes(el))
+    //       ? `${encodeURIComponent(
+    //           encodeURIComponent(item.name)
+    //         )}AND${encodeURIComponent(encodeURIComponent(item.barcode))}SIDE`
+    //       : `${encodeURIComponent(item.name)}AND${encodeURIComponent(
+    //           item.barcode
+    //         )}SIDE`
+    //     : "sample";
+    //   item.sideImageURL =
+    //     rootURL + "v" + item.sideImageVersion + "/" + item.sideImageURL;
+    //   await item.save();
+    // });
     const items = Item.find(filter)
       .sort({ [sortName]: sequence, row: -1, column: 1 })
       .limit(parseInt(pageSize))
