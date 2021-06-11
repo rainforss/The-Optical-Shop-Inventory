@@ -89,6 +89,7 @@ export const addItem = (newItem, images) => async (dispatch, getState) => {
     );
 
     let versions = {};
+    let imageURLs = [];
     if (images.front) {
       const formData = new FormData();
       formData.append("file", images.front);
@@ -108,6 +109,7 @@ export const addItem = (newItem, images) => async (dispatch, getState) => {
         formData
       );
       versions.frontImageVersion = front.data.version;
+      imageURLs.push({ src: front.data.secure_url });
     }
     if (images.side) {
       const formData = new FormData();
@@ -128,6 +130,7 @@ export const addItem = (newItem, images) => async (dispatch, getState) => {
         formData
       );
       versions.sideImageVersion = side.data.version;
+      imageURLs.push({ src: side.data.secure_url });
     }
     body = JSON.stringify(versions);
     const res = await axios.put(
@@ -150,103 +153,101 @@ export const addItem = (newItem, images) => async (dispatch, getState) => {
   }
 };
 
-export const updateItem = (updatedItem, itemImage, itemId) => async (
-  dispatch,
-  getState
-) => {
-  const specialChars = [`&`, `'`];
-  try {
-    //If new item image is attached, upload the new image to Cloudinary and notify the server to destroy old image
-    if (itemImage.front) {
-      //Get Cloudinary authentication string from the server and post image to Cloudinary
-      const info = JSON.stringify({
-        public_id: specialChars.some((el) => updatedItem.name.includes(el))
-          ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
-              updatedItem.barcode
-            )}FRONT`
-          : `${updatedItem.name}AND${updatedItem.barcode}FRONT`,
-      });
-      const authenticate = await axios.post(
-        "api/user/getsignature",
-        info,
+export const updateItem =
+  (updatedItem, itemImage, itemId) => async (dispatch, getState) => {
+    const specialChars = [`&`, `'`];
+    try {
+      //If new item image is attached, upload the new image to Cloudinary and notify the server to destroy old image
+      if (itemImage.front) {
+        //Get Cloudinary authentication string from the server and post image to Cloudinary
+        const info = JSON.stringify({
+          public_id: specialChars.some((el) => updatedItem.name.includes(el))
+            ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
+                updatedItem.barcode
+              )}FRONT`
+            : `${updatedItem.name}AND${updatedItem.barcode}FRONT`,
+        });
+        const authenticate = await axios.post(
+          "api/user/getsignature",
+          info,
+          tokenConfiguration(getState)
+        );
+        const newFile = new FormData();
+        newFile.append("file", itemImage.front);
+        newFile.append(
+          "public_id",
+          specialChars.some((el) => updatedItem.name.includes(el))
+            ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
+                updatedItem.barcode
+              )}FRONT`
+            : `${updatedItem.name}AND${updatedItem.barcode}FRONT`
+        );
+        newFile.append("api_key", "334344196228832");
+        newFile.append("timestamp", authenticate.data.timestamp);
+        newFile.append("signature", authenticate.data.signature);
+        const image = await axios.post(
+          "https://api.cloudinary.com/v1_1/rainforss/image/upload",
+          newFile
+        );
+        updatedItem.hasFront = true;
+        updatedItem.frontImageVersion = image.data.version;
+      }
+
+      if (itemImage.side) {
+        const info = JSON.stringify({
+          public_id: specialChars.some((el) => updatedItem.name.includes(el))
+            ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
+                updatedItem.barcode
+              )}SIDE`
+            : `${updatedItem.name}AND${updatedItem.barcode}SIDE`,
+        });
+        const authenticate = await axios.post(
+          "api/user/getsignature",
+          info,
+          tokenConfiguration(getState)
+        );
+        const newFile = new FormData();
+        newFile.append("file", itemImage.side);
+        newFile.append(
+          "public_id",
+          specialChars.some((el) => updatedItem.name.includes(el))
+            ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
+                updatedItem.barcode
+              )}SIDE`
+            : `${updatedItem.name}AND${updatedItem.barcode}SIDE`
+        );
+        newFile.append("api_key", "334344196228832");
+        newFile.append("timestamp", authenticate.data.timestamp);
+        newFile.append("signature", authenticate.data.signature);
+        const image = await axios.post(
+          "https://api.cloudinary.com/v1_1/rainforss/image/upload",
+          newFile
+        );
+        updatedItem.hasSide = true;
+        updatedItem.sideImageVersion = image.data.version;
+      }
+
+      const body = JSON.stringify(updatedItem);
+      const res = await axios.put(
+        `api/items/${itemId}`,
+        body,
         tokenConfiguration(getState)
       );
-      const newFile = new FormData();
-      newFile.append("file", itemImage.front);
-      newFile.append(
-        "public_id",
-        specialChars.some((el) => updatedItem.name.includes(el))
-          ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
-              updatedItem.barcode
-            )}FRONT`
-          : `${updatedItem.name}AND${updatedItem.barcode}FRONT`
-      );
-      newFile.append("api_key", "334344196228832");
-      newFile.append("timestamp", authenticate.data.timestamp);
-      newFile.append("signature", authenticate.data.signature);
-      const image = await axios.post(
-        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
-        newFile
-      );
-      updatedItem.hasFront = true;
-      updatedItem.frontImageVersion = image.data.version;
-    }
 
-    if (itemImage.side) {
-      const info = JSON.stringify({
-        public_id: specialChars.some((el) => updatedItem.name.includes(el))
-          ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
-              updatedItem.barcode
-            )}SIDE`
-          : `${updatedItem.name}AND${updatedItem.barcode}SIDE`,
+      //Collect response and dispatch action
+      dispatch({
+        type: types.UPDATE_ITEM,
+        updatedItem: res.data,
       });
-      const authenticate = await axios.post(
-        "api/user/getsignature",
-        info,
-        tokenConfiguration(getState)
+    } catch (err) {
+      dispatch(
+        returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
       );
-      const newFile = new FormData();
-      newFile.append("file", itemImage.side);
-      newFile.append(
-        "public_id",
-        specialChars.some((el) => updatedItem.name.includes(el))
-          ? `${encodeURIComponent(updatedItem.name)}AND${encodeURIComponent(
-              updatedItem.barcode
-            )}SIDE`
-          : `${updatedItem.name}AND${updatedItem.barcode}SIDE`
-      );
-      newFile.append("api_key", "334344196228832");
-      newFile.append("timestamp", authenticate.data.timestamp);
-      newFile.append("signature", authenticate.data.signature);
-      const image = await axios.post(
-        "https://api.cloudinary.com/v1_1/rainforss/image/upload",
-        newFile
-      );
-      updatedItem.hasSide = true;
-      updatedItem.sideImageVersion = image.data.version;
+      dispatch({
+        type: types.UPDATE_ITEM_FAIL,
+      });
     }
-
-    const body = JSON.stringify(updatedItem);
-    const res = await axios.put(
-      `api/items/${itemId}`,
-      body,
-      tokenConfiguration(getState)
-    );
-
-    //Collect response and dispatch action
-    dispatch({
-      type: types.UPDATE_ITEM,
-      updatedItem: res.data,
-    });
-  } catch (err) {
-    dispatch(
-      returnErrors(err.response.data, err.response.status, "ITEM_ERROR")
-    );
-    dispatch({
-      type: types.UPDATE_ITEM_FAIL,
-    });
-  }
-};
+  };
 
 export const resetStatus = () => {
   return {
